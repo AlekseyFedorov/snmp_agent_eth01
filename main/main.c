@@ -6,6 +6,7 @@
 #include "freertos/task.h"
 #include "esp_timer.h"       // Для аптайма
 #include "esp_system.h"      // Для памяти
+#include "esp_mac.h"
 
 #include "lwip/apps/snmp.h"
 #include "lwip/apps/snmp_mib2.h"
@@ -19,9 +20,10 @@ static int32_t cached_temp_x10 = 0;
 
 // Данные для MIB2
 static u8_t syscontact_storage[64] = "gpbu17672";
-static u16_t syscontact_len = 11;
+static u16_t syscontact_len = 9;
 static u8_t syslocation_storage[64] = "GPB Bel";
-static u16_t syslocation_len = 10;
+static u16_t syslocation_len = 7;
+
 
 // Фоновая задача опроса датчика
 void sensor_polling_task(void *pvParameters) {
@@ -37,32 +39,74 @@ void sensor_polling_task(void *pvParameters) {
 
 static s16_t get_system_metrics(const struct snmp_scalar_array_node_def *node, void *value) {
     uint32_t *uint_ptr = (uint32_t *)value;
+    uint8_t mac[6];
 
-        switch (node->oid) {
-        case 1: // Температура (.1.1.0)
+    switch (node->oid) {
+        case 1: // Температура
             *(int32_t *)value = cached_temp_x10;
             return sizeof(int32_t);
 
-        case 2: // Свободная память (.1.2.0)
+        case 2: // Свободная память
             *uint_ptr = esp_get_free_heap_size();
             return sizeof(uint32_t);
 
-        case 3: // Uptime в сотых долях секунды (.1.3.0)
+        case 3: // Uptime
             *uint_ptr = (uint32_t)(esp_timer_get_time() / 10000);
             return sizeof(uint32_t);
+
+        case 4: // Загрузка процессора (упрощенно)
+            // В реальных задачах нужен сложный расчет, здесь вернем 
+            // имитацию нагрузки на основе idle задач или константу для теста
+            *uint_ptr = 100 - (esp_get_free_heap_size() % 10); // Временная заглушка
+            return sizeof(int32_t);
+
+        case 5: // Уникальный номер (Base MAC Address)
+            esp_read_mac(mac, ESP_MAC_WIFI_STA);
+            // Копируем 6 байт MAC-адреса в буфер SNMP
+            memcpy(value, mac, 6);
+            return 6;
 
         default:
             return 0;
     }
-    
-    return 0;
-
 }
+
+// static s16_t get_system_metrics(const struct snmp_scalar_array_node_def *node, void *value) {
+//     uint32_t *uint_ptr = (uint32_t *)value;
+
+//         switch (node->oid) {
+//         case 1: // Температура (.1.1.0)
+//             *(int32_t *)value = cached_temp_x10;
+//             return sizeof(int32_t);
+
+//         case 2: // Свободная память (.1.2.0)
+//             *uint_ptr = esp_get_free_heap_size();
+//             return sizeof(uint32_t);
+
+//         case 3: // Uptime в сотых долях секунды (.1.3.0)
+//             *uint_ptr = (uint32_t)(esp_timer_get_time() / 10000);
+//             return sizeof(uint32_t);
+
+//         default:
+//             return 0;
+//     }
+    
+//     return 0;
+
+// }
 // --- СТРУКТУРА УЗЛОВ ---
+// static const struct snmp_scalar_array_node_def sensor_nodes_def[] = {
+//     {1, SNMP_ASN1_TYPE_INTEGER,   SNMP_NODE_INSTANCE_READ_ONLY}, // Temp
+//     {2, SNMP_ASN1_TYPE_GAUGE32,   SNMP_NODE_INSTANCE_READ_ONLY}, // Heap
+//     {3, SNMP_ASN1_TYPE_TIMETICKS, SNMP_NODE_INSTANCE_READ_ONLY}  // Uptime
+// };
+
 static const struct snmp_scalar_array_node_def sensor_nodes_def[] = {
-    {1, SNMP_ASN1_TYPE_INTEGER,   SNMP_NODE_INSTANCE_READ_ONLY}, // Temp
-    {2, SNMP_ASN1_TYPE_GAUGE32,   SNMP_NODE_INSTANCE_READ_ONLY}, // Heap
-    {3, SNMP_ASN1_TYPE_TIMETICKS, SNMP_NODE_INSTANCE_READ_ONLY}  // Uptime
+    {1, SNMP_ASN1_TYPE_INTEGER,      SNMP_NODE_INSTANCE_READ_ONLY}, // Temp
+    {2, SNMP_ASN1_TYPE_GAUGE32,      SNMP_NODE_INSTANCE_READ_ONLY}, // Heap
+    {3, SNMP_ASN1_TYPE_TIMETICKS,    SNMP_NODE_INSTANCE_READ_ONLY}, // Uptime
+    {4, SNMP_ASN1_TYPE_INTEGER,      SNMP_NODE_INSTANCE_READ_ONLY}, // CPU Load
+    {5, SNMP_ASN1_TYPE_OCTET_STRING, SNMP_NODE_INSTANCE_READ_ONLY}  // Device ID (MAC)
 };
 
 static const struct snmp_scalar_array_node snmp_sensor_node = 
@@ -82,6 +126,9 @@ void app_main(void) {
     if (ethernet_init_static() == ESP_OK) {
         sensors_init();
         xTaskCreate(sensor_polling_task, "sensor_task", 4096, NULL, 5, NULL);
+
+        syscontact_len = (u16_t)strlen((char*)syscontact_storage);
+        syslocation_len = (u16_t)strlen((char*)syslocation_storage);
 
         snmp_set_community("public");
         snmp_mib2_set_syscontact(syscontact_storage, &syscontact_len, sizeof(syscontact_storage));
