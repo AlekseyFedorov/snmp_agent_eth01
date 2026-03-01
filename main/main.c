@@ -13,8 +13,12 @@
 #include "lwip/apps/snmp_mib2.h"
 #include "lwip/apps/snmp_scalar.h"
 
+#include "driver/gpio.h"
+
 #include "ethernet_app.h"
 #include "sensors_app.h"
+
+#define RESET_BUTTON_PIN 0 // Обычно GPIO 0 - это кнопка BOOT на плате
 
 static const char *TAG = "SNMP_MAIN";
 static int32_t cached_temp_x10 = 0;
@@ -72,6 +76,43 @@ static s16_t get_system_metrics(const struct snmp_scalar_array_node_def *node, v
     }
 }
 
+// Задача для отслеживания кнопки сброса, обычно GPIO 0 - это кнопка BOOT на плате
+void factory_reset_task(void *pvParameter) {
+    // Настраиваем пин кнопки
+    gpio_reset_pin(RESET_BUTTON_PIN);
+    gpio_set_direction(RESET_BUTTON_PIN, GPIO_MODE_INPUT);
+    gpio_set_pull_mode(RESET_BUTTON_PIN, GPIO_PULLUP_ONLY); // Подтягиваем к питанию
+
+    int press_counter = 0;
+
+    while(1) {
+        // Если кнопка нажата (на GPIO 0 логический ноль)
+        if (gpio_get_level(RESET_BUTTON_PIN) == 0) {
+            press_counter++;
+            
+            // Если держим 5 секунд (50 циклов по 100 мс)
+            if (press_counter >= 50) {
+                ESP_LOGW(TAG, "!!! FACTORY RESET TRIGGERED !!!");
+                
+                nvs_handle_t my_handle;
+                if (nvs_open("storage", NVS_READWRITE, &my_handle) == ESP_OK) {
+                    // Стираем всё в пространстве "storage"
+                    nvs_erase_all(my_handle); 
+                    nvs_commit(my_handle);
+                    nvs_close(my_handle);
+                }
+                
+                ESP_LOGW(TAG, "NVS Erased. Rebooting in 2 seconds...");
+                vTaskDelay(pdMS_TO_TICKS(2000));
+                esp_restart(); // Жёсткая перезагрузка чипа
+            }
+        } else {
+            press_counter = 0; // Сбрасываем таймер, если кнопку отпустили раньше времени
+        }
+        
+        vTaskDelay(pdMS_TO_TICKS(100)); // Опрашиваем кнопку 10 раз в секунду
+    }
+}
 // static s16_t get_system_metrics(const struct snmp_scalar_array_node_def *node, void *value) {
 //     uint32_t *uint_ptr = (uint32_t *)value;
 
@@ -123,6 +164,9 @@ static const struct snmp_mib *mibs[] = { &mib2, &sensor_mib };
 void app_main(void) {
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
+
+    // Запускаем службу сброса
+    xTaskCreate(factory_reset_task, "reset_task", 2048, NULL, 5, NULL);
 
     uint32_t flash_size;
     if (esp_flash_get_size(NULL, &flash_size) == ESP_OK) {

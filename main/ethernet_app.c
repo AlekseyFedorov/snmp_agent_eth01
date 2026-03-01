@@ -6,7 +6,48 @@
 #include "driver/gpio.h"
 #include "ethernet_app.h"
 
+#include "nvs.h"
+#include "nvs_flash.h"
+
 static const char *TAG = "ETH_WT32";
+
+// Значения по умолчанию
+char ip_addr_str[16] = "192.168.0.2";
+char gw_addr_str[16] = "192.168.0.1";
+char netmask_str[16] = "255.255.255.0";
+
+void load_network_settings() {
+    nvs_handle_t my_handle;
+    // Открываем NVS
+    esp_err_t err = nvs_open("storage", NVS_READWRITE, &my_handle);
+    if (err != ESP_OK) return;
+
+    size_t required_size;
+
+    // Читаем IP
+    if (nvs_get_str(my_handle, "ip_addr", NULL, &required_size) == ESP_OK && required_size <= 16) {
+        nvs_get_str(my_handle, "ip_addr", ip_addr_str, &required_size);
+    } else {
+        nvs_set_str(my_handle, "ip_addr", ip_addr_str); // Сохраняем дефолт
+    }
+
+    // Читаем Шлюз (Gateway)
+    if (nvs_get_str(my_handle, "gw_addr", NULL, &required_size) == ESP_OK && required_size <= 16) {
+        nvs_get_str(my_handle, "gw_addr", gw_addr_str, &required_size);
+    } else {
+        nvs_set_str(my_handle, "gw_addr", gw_addr_str);
+    }
+
+    // Читаем Маску
+    if (nvs_get_str(my_handle, "netmask", NULL, &required_size) == ESP_OK && required_size <= 16) {
+        nvs_get_str(my_handle, "netmask", netmask_str, &required_size);
+    } else {
+        nvs_set_str(my_handle, "netmask", netmask_str);
+    }
+
+    nvs_commit(my_handle);
+    nvs_close(my_handle);
+}
 
 esp_err_t ethernet_init_static(void) {
     ESP_ERROR_CHECK(esp_netif_init());
@@ -19,13 +60,26 @@ esp_err_t ethernet_init_static(void) {
     esp_netif_config_t netif_cfg = ESP_NETIF_DEFAULT_ETH();
     esp_netif_t *eth_netif = esp_netif_new(&netif_cfg);
 
+    // Сначала загружаем настройки из памяти
+    load_network_settings();
+
+    // Настраиваем LwIP
+    // esp_netif_ip_info_t ip_info;
+
     // Статический IP
     esp_netif_dhcpc_stop(eth_netif);
     esp_netif_ip_info_t ip_info;
-    ip_info.ip.addr = esp_ip4addr_aton("192.168.0.50");
-    ip_info.gw.addr = esp_ip4addr_aton("192.168.0.1");
-    ip_info.netmask.addr = esp_ip4addr_aton("255.255.255.0");
+    // ip_info.ip.addr = esp_ip4addr_aton("192.168.0.50");
+    // ip_info.gw.addr = esp_ip4addr_aton("192.168.0.1");
+    // ip_info.netmask.addr = esp_ip4addr_aton("255.255.255.0");
+    // Используем наши переменные вместо жесткого текста!
+    ip_info.ip.addr = esp_ip4addr_aton(ip_addr_str);
+    ip_info.gw.addr = esp_ip4addr_aton(gw_addr_str);
+    ip_info.netmask.addr = esp_ip4addr_aton(netmask_str);
+
+    // Применяем
     esp_netif_set_ip_info(eth_netif, &ip_info);
+//    esp_netif_set_ip_info(eth_netif, &ip_info);
 
     // внешний осциллятор через GPIO 16
     gpio_reset_pin(GPIO_NUM_16);
