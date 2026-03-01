@@ -1,9 +1,7 @@
 #include <string.h>
 #include "esp_log.h"
 #include "nvs_flash.h"
-//#include "esp_flash.h"
 #include "esp_flash.h"
-//#include "spi_flash_mmap.h"
 #include "esp_event.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
