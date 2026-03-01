@@ -7,7 +7,7 @@ file(GLOB SNMP_SOURCES
 idf_component_register(
     SRCS "main.c" "ethernet_app.c" "sensors_app.c" ${SNMP_SOURCES}
     INCLUDE_DIRS "."
-    REQUIRES lwip esp_netif esp_eth esp_event nvs_flash esp_timer esp_driver_gpio
+    REQUIRES lwip esp_netif esp_eth esp_event nvs_flash esp_timer esp_driver_gpio spi_flash
              espressif__ds18b20 espressif__onewire_bus
             #  esp_driver_gpio esp_driver_rmt
 )

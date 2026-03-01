@@ -1,6 +1,9 @@
 #include <string.h>
 #include "esp_log.h"
 #include "nvs_flash.h"
+//#include "esp_flash.h"
+#include "esp_flash.h"
+//#include "spi_flash_mmap.h"
 #include "esp_event.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -122,6 +125,13 @@ static const struct snmp_mib *mibs[] = { &mib2, &sensor_mib };
 void app_main(void) {
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
+
+    uint32_t flash_size;
+    if (esp_flash_get_size(NULL, &flash_size) == ESP_OK) {
+        ESP_LOGI(TAG, "Hardware Flash Size: %lu MB", flash_size / (1024 * 1024));
+    } else {
+        ESP_LOGE(TAG, "Failed to get flash size");
+    }
 
     if (ethernet_init_static() == ESP_OK) {
         sensors_init();
