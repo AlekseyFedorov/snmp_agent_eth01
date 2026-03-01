@@ -27,5 +27,5 @@ snmpwalk -v 2c -c public 192.168.0.50 .1.3.6.1.2.1.1
 
 1. Скачать - git clone https://github.com/AlekseyFedorov/snmp_agent_eth01.git
 2. LWIP_STATS = y
-   Flash size = 8 MB ?????
+   Flash size = 8 MB ????? Скорее 4, так постандарту. Добавил проверку и вывод в консоль.
 3. Add .vscode subdirectory files
