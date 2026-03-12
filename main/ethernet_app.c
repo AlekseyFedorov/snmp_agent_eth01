@@ -22,9 +22,9 @@ esp_err_t ethernet_init_static(void) {
     // Статический IP
     esp_netif_dhcpc_stop(eth_netif);
     esp_netif_ip_info_t ip_info;
-    ip_info.ip.addr = esp_ip4addr_aton("192.168.0.50");
-    ip_info.gw.addr = esp_ip4addr_aton("192.168.0.1");
-    ip_info.netmask.addr = esp_ip4addr_aton("255.255.255.0");
+    ip_info.ip.addr = esp_ip4addr_aton("10.149.130.75");
+    ip_info.gw.addr = esp_ip4addr_aton("10.149.130.65");
+    ip_info.netmask.addr = esp_ip4addr_aton("255.255.255.224");
     esp_netif_set_ip_info(eth_netif, &ip_info);
 
     // внешний осциллятор через GPIO 16
