@@ -5,3 +5,6 @@ sdkconfig.old
 dependencies.lock
 .vscode
 .clangd
+
+# Игнорировать кэш
+.cache
