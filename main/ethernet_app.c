@@ -11,9 +11,9 @@
 static const char *TAG = "ETH_WT32";
 
 // Значения по умолчанию
-char ip_addr_str[16] = "10.149.130.75";
-char gw_addr_str[16] = "10.149.130.65";
-char netmask_str[16] = "255.255.255.224";
+char ip_addr_str[16] = "192.168.0.1";
+char gw_addr_str[16] = "0.0.0.0";
+char netmask_str[16] = "255.255.255.0";
 
 void load_network_settings() {
   nvs_handle_t my_handle;
