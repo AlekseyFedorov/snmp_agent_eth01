@@ -15,6 +15,19 @@ char ip_addr_str[16] = "192.168.2.50";
 char gw_addr_str[16] = "192.168.2.1";
 char netmask_str[16] = "255.255.255.0";
 
+static void eth_event_handler(void *arg, esp_event_base_t event_base,
+                              int32_t event_id, void *event_data) {
+  esp_netif_t *eth_netif = (esp_netif_t *)arg;
+  if (event_base == ETH_EVENT && event_id == ETHERNET_EVENT_CONNECTED) {
+    esp_netif_dhcpc_stop(eth_netif);
+    esp_netif_ip_info_t ip_info;
+    ip_info.ip.addr = esp_ip4addr_aton(ip_addr_str);
+    ip_info.gw.addr = esp_ip4addr_aton(gw_addr_str);
+    ip_info.netmask.addr = esp_ip4addr_aton(netmask_str);
+    esp_netif_set_ip_info(eth_netif, &ip_info);
+  }
+}
+
 void load_network_settings() {
   nvs_handle_t my_handle;
   // Открываем NVS
@@ -69,14 +82,13 @@ esp_err_t ethernet_init_static(void) {
   // Настраиваем LwIP
   // esp_netif_ip_info_t ip_info;
 
-  // Статический IP
-  esp_netif_dhcpc_stop(eth_netif);
-  esp_netif_ip_info_t ip_info;
-  // Используем переменные (из NVS или дефолты)
-  ip_info.ip.addr = esp_ip4addr_aton(ip_addr_str);
-  ip_info.gw.addr = esp_ip4addr_aton(gw_addr_str);
-  ip_info.netmask.addr = esp_ip4addr_aton(netmask_str);
-  esp_netif_set_ip_info(eth_netif, &ip_info);
+  // Регистрируем обработчик для установки статического IP при подключении кабеля
+  esp_event_handler_instance_t instance_connected;
+  ESP_ERROR_CHECK(esp_event_handler_instance_register(ETH_EVENT,
+                                                      ETHERNET_EVENT_CONNECTED,
+                                                      &eth_event_handler,
+                                                      eth_netif,
+                                                      &instance_connected));
   //    esp_netif_set_ip_info(eth_netif, &ip_info);
 
   // внешний осциллятор через GPIO 16
