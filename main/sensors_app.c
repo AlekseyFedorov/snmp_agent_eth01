@@ -4,13 +4,20 @@
 #include "onewire_bus.h"
 #include "ds18b20.h"
 #include "sensors_app.h"
+#include "driver/gpio.h"
 
 static const char *TAG = "SENSORS";
 #define ONEWIRE_BUS_GPIO    32 
+#define WATER_LEAK_GPIO     33
 
 static ds18b20_device_handle_t ds18b20_dev = NULL;
 
 void sensors_init(void) {
+    // Инициализация датчика протечки H2O-Контакт
+    gpio_reset_pin(WATER_LEAK_GPIO);
+    gpio_set_direction(WATER_LEAK_GPIO, GPIO_MODE_INPUT);
+    gpio_set_pull_mode(WATER_LEAK_GPIO, GPIO_PULLUP_ONLY);
+
     onewire_bus_handle_t bus = NULL;
     onewire_bus_config_t bus_config = { .bus_gpio_num = ONEWIRE_BUS_GPIO };
     onewire_bus_rmt_config_t rmt_config = { .max_rx_bytes = 10 };
@@ -48,4 +55,11 @@ float get_sensor_temperature(void) {
         }
     }
     return temp;
+}
+
+int get_water_leak_status(void) {
+    // Если датчик замкнут (протечка), пин притянется к земле = 0.
+    // Если сухо = 1 (благодаря PULLUP).
+    // Возвращаем 1 в случае утечки (логический 1 = тревога).
+    return (gpio_get_level(WATER_LEAK_GPIO) == 0) ? 1 : 0;
 }

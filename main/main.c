@@ -116,6 +116,9 @@ static s16_t get_system_metrics(const struct snmp_scalar_array_node_def *node, v
             esp_read_mac(mac, ESP_MAC_ETH);
             memcpy(value, mac, 6);
             return 6;
+        case 6:
+            *(int32_t *)value = get_water_leak_status();
+            return sizeof(int32_t);
         case 10:
             memcpy(value, ip_addr_str, strlen(ip_addr_str));
             return strlen(ip_addr_str);
@@ -207,6 +210,7 @@ static const struct snmp_scalar_array_node_def sensor_nodes_def[] =
     {3, SNMP_ASN1_TYPE_TIMETICKS,    SNMP_NODE_INSTANCE_READ_ONLY},
     {4, SNMP_ASN1_TYPE_INTEGER,      SNMP_NODE_INSTANCE_READ_ONLY},
     {5, SNMP_ASN1_TYPE_OCTET_STRING, SNMP_NODE_INSTANCE_READ_ONLY},
+    {6, SNMP_ASN1_TYPE_INTEGER,      SNMP_NODE_INSTANCE_READ_ONLY},
 
     {10, SNMP_ASN1_TYPE_OCTET_STRING, SNMP_NODE_INSTANCE_READ_WRITE},
     {11, SNMP_ASN1_TYPE_OCTET_STRING, SNMP_NODE_INSTANCE_READ_WRITE},
