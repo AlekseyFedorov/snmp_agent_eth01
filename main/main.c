@@ -1,4 +1,6 @@
 #include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "esp_event.h"
@@ -7,18 +9,28 @@
 #include "esp_timer.h"
 #include "esp_system.h"
 #include "esp_mac.h"
+#include "esp_heap_caps.h"
 #include "driver/gpio.h"
 #include "nvs.h"
 
 #include "lwip/apps/snmp.h"
 #include "lwip/apps/snmp_mib2.h"
 #include "lwip/apps/snmp_scalar.h"
+#include "lwip/def.h"
 #include "lwip/ip4_addr.h"
 
 #include "ethernet_app.h"
 #include "sensors_app.h"
 
 #define RESET_BUTTON_PIN 0
+
+#ifndef SNMP_READ_COMMUNITY
+#define SNMP_READ_COMMUNITY "public"
+#endif
+
+#ifndef SNMP_WRITE_COMMUNITY
+#define SNMP_WRITE_COMMUNITY "private"
+#endif
 
 static const char *TAG = "SNMP_MAIN";
 
@@ -30,6 +42,52 @@ static u16_t syscontact_len = 9;
 
 static u8_t syslocation_storage[64] = "GPB Bel";
 static u16_t syslocation_len = 7;
+
+static uint32_t get_heap_used_percent(void)
+{
+    size_t total_heap = heap_caps_get_total_size(MALLOC_CAP_8BIT);
+    size_t free_heap = heap_caps_get_free_size(MALLOC_CAP_8BIT);
+
+    if (total_heap == 0 || free_heap >= total_heap)
+    {
+        return 0;
+    }
+
+    return (uint32_t)(((total_heap - free_heap) * 100U) / total_heap);
+}
+
+static bool is_strict_ipv4_string(const char *value)
+{
+    int dots = 0;
+
+    for (const char *p = value; *p != 0; ++p)
+    {
+        if (*p == '.')
+        {
+            dots++;
+            continue;
+        }
+
+        if (*p < '0' || *p > '9')
+        {
+            return false;
+        }
+    }
+
+    return dots == 3;
+}
+
+static bool is_contiguous_netmask(const ip4_addr_t *mask)
+{
+    uint32_t mask_host = lwip_ntohl(ip4_addr_get_u32(mask));
+
+    if (mask_host == 0)
+    {
+        return false;
+    }
+
+    return (mask_host | (mask_host - 1U)) == UINT32_MAX;
+}
 
 /* ============================ */
 /* SENSOR POLLING TASK          */
@@ -110,7 +168,7 @@ static s16_t get_system_metrics(const struct snmp_scalar_array_node_def *node, v
             *uint_ptr = (uint32_t)(esp_timer_get_time() / 10000);
             return sizeof(uint32_t);
         case 4:
-            *uint_ptr = 100 - (esp_get_free_heap_size() % 10);
+            *uint_ptr = get_heap_used_percent();
             return sizeof(uint32_t);
         case 5:
             esp_read_mac(mac, ESP_MAC_ETH);
@@ -118,6 +176,12 @@ static s16_t get_system_metrics(const struct snmp_scalar_array_node_def *node, v
             return 6;
         case 6:
             *(int32_t *)value = get_water_leak_status();
+            return sizeof(int32_t);
+        case 7:
+            *(int32_t *)value = get_door_open_status_1();
+            return sizeof(int32_t);
+        case 8:
+            *(int32_t *)value = get_door_open_status_2();
             return sizeof(int32_t);
         case 10:
             memcpy(value, ip_addr_str, strlen(ip_addr_str));
@@ -145,13 +209,17 @@ static void reboot_timer_callback(void* arg) {
 static snmp_err_t test_system_config(const struct snmp_scalar_array_node_def *node, u16_t len, void *value)
 {
     char buffer[16];
-    if (len >= sizeof(buffer)) return SNMP_ERR_WRONGLENGTH;
+    if (node->oid != 10 && node->oid != 11 && node->oid != 12) return SNMP_ERR_NOTWRITABLE;
+    if (len < 7 || len >= sizeof(buffer)) return SNMP_ERR_WRONGLENGTH;
 
     memcpy(buffer, value, len);
     buffer[len] = 0;
 
-    ip4_addr_t test_ip; // Изменено на ip4_addr_t
-    if (!ip4addr_aton(buffer, &test_ip)) return SNMP_ERR_WRONGVALUE; // Изменено на ip4addr_aton
+    if (!is_strict_ipv4_string(buffer)) return SNMP_ERR_WRONGVALUE;
+
+    ip4_addr_t test_ip;
+    if (!ip4addr_aton(buffer, &test_ip)) return SNMP_ERR_WRONGVALUE;
+    if (node->oid == 12 && !is_contiguous_netmask(&test_ip)) return SNMP_ERR_WRONGVALUE;
 
     return SNMP_ERR_NOERROR;
 }
@@ -160,41 +228,60 @@ static snmp_err_t test_system_config(const struct snmp_scalar_array_node_def *no
 static snmp_err_t set_system_config(const struct snmp_scalar_array_node_def *node, u16_t len, void *value)
 {
     char buffer[16];
+    snmp_err_t test_result = test_system_config(node, len, value);
+    if (test_result != SNMP_ERR_NOERROR) return test_result;
+
     memcpy(buffer, value, len);
     buffer[len] = 0;
 
     nvs_handle_t handle;
     if (nvs_open("storage", NVS_READWRITE, &handle) != ESP_OK) return SNMP_ERR_GENERROR;
 
+    char *target = NULL;
+    const char *key = NULL;
     switch (node->oid)
     {
         case 10:
-            strcpy(ip_addr_str, buffer);
-            nvs_set_str(handle, "ip_addr", buffer);
+            target = ip_addr_str;
+            key = "ip_addr";
             break;
         case 11:
-            strcpy(gw_addr_str, buffer);
-            nvs_set_str(handle, "gw_addr", buffer);
+            target = gw_addr_str;
+            key = "gw_addr";
             break;
         case 12:
-            strcpy(netmask_str, buffer);
-            nvs_set_str(handle, "netmask", buffer);
+            target = netmask_str;
+            key = "netmask";
             break;
         default:
             nvs_close(handle);
             return SNMP_ERR_NOTWRITABLE;
     }
 
-    nvs_commit(handle);
+    if (nvs_set_str(handle, key, buffer) != ESP_OK)
+    {
+        nvs_close(handle);
+        return SNMP_ERR_GENERROR;
+    }
+
+    if (nvs_commit(handle) != ESP_OK)
+    {
+        nvs_close(handle);
+        return SNMP_ERR_GENERROR;
+    }
     nvs_close(handle);
+    strcpy(target, buffer);
 
     ESP_LOGW(TAG, "Network config changed via SNMP, rebooting in 1s...");
 
     // Асинхронный запуск перезагрузки
     esp_timer_create_args_t reboot_args = { .callback = &reboot_timer_callback, .name = "reboot" };
     esp_timer_handle_t timer;
-    esp_timer_create(&reboot_args, &timer);
-    esp_timer_start_once(timer, 1000000); 
+    if (esp_timer_create(&reboot_args, &timer) != ESP_OK ||
+        esp_timer_start_once(timer, 1000000) != ESP_OK)
+    {
+        return SNMP_ERR_GENERROR;
+    }
 
     return SNMP_ERR_NOERROR;
 }
@@ -208,9 +295,11 @@ static const struct snmp_scalar_array_node_def sensor_nodes_def[] =
     {1, SNMP_ASN1_TYPE_INTEGER,      SNMP_NODE_INSTANCE_READ_ONLY},
     {2, SNMP_ASN1_TYPE_GAUGE32,      SNMP_NODE_INSTANCE_READ_ONLY},
     {3, SNMP_ASN1_TYPE_TIMETICKS,    SNMP_NODE_INSTANCE_READ_ONLY},
-    {4, SNMP_ASN1_TYPE_INTEGER,      SNMP_NODE_INSTANCE_READ_ONLY},
+    {4, SNMP_ASN1_TYPE_GAUGE32,      SNMP_NODE_INSTANCE_READ_ONLY},
     {5, SNMP_ASN1_TYPE_OCTET_STRING, SNMP_NODE_INSTANCE_READ_ONLY},
     {6, SNMP_ASN1_TYPE_INTEGER,      SNMP_NODE_INSTANCE_READ_ONLY},
+    {7, SNMP_ASN1_TYPE_INTEGER,      SNMP_NODE_INSTANCE_READ_ONLY},
+    {8, SNMP_ASN1_TYPE_INTEGER,      SNMP_NODE_INSTANCE_READ_ONLY},
 
     {10, SNMP_ASN1_TYPE_OCTET_STRING, SNMP_NODE_INSTANCE_READ_WRITE},
     {11, SNMP_ASN1_TYPE_OCTET_STRING, SNMP_NODE_INSTANCE_READ_WRITE},
@@ -257,8 +346,8 @@ void app_main(void)
         syscontact_len = strlen((char*)syscontact_storage);
         syslocation_len = strlen((char*)syslocation_storage);
 
-        snmp_set_community("public");
-        snmp_set_community_write("private"); // Исправлено имя функции
+        snmp_set_community(SNMP_READ_COMMUNITY);
+        snmp_set_community_write(SNMP_WRITE_COMMUNITY); // Исправлено имя функции
 
         snmp_mib2_set_syscontact(syscontact_storage, &syscontact_len, sizeof(syscontact_storage));
         snmp_mib2_set_syslocation(syslocation_storage, &syslocation_len, sizeof(syslocation_storage));
