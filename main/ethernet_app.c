@@ -68,11 +68,6 @@ void load_network_settings() {
 esp_err_t ethernet_init_static(void) {
   ESP_ERROR_CHECK(esp_netif_init());
 
-  esp_err_t ret = esp_event_loop_create_default();
-  if (ret != ESP_OK && ret != ESP_ERR_INVALID_STATE) {
-    ESP_ERROR_CHECK(ret);
-  }
-
   esp_netif_config_t netif_cfg = ESP_NETIF_DEFAULT_ETH();
   esp_netif_t *eth_netif = esp_netif_new(&netif_cfg);
 
