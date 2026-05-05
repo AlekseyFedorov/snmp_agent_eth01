@@ -5,3 +5,5 @@ sdkconfig.old
 .clangd
 .cache
 .idea
+dependencies.lock
+dependencies.lock
