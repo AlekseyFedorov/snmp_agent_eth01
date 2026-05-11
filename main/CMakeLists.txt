@@ -8,7 +8,7 @@ set(SNMP_READ_COMMUNITY "public" CACHE STRING "SNMP read community")
 set(SNMP_WRITE_COMMUNITY "private" CACHE STRING "SNMP write community")
 
 idf_component_register(
-    SRCS "main.c" "ethernet_app.c" "sensors_app.c" ${SNMP_SOURCES}
+    SRCS "main.c" "ethernet_app.c" "sensors_app.c" "led_app.c" ${SNMP_SOURCES}
     INCLUDE_DIRS "."
     REQUIRES lwip esp_netif esp_eth esp_event nvs_flash esp_timer esp_driver_gpio spi_flash
              heap espressif__ds18b20 espressif__onewire_bus

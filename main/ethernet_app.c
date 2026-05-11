@@ -5,6 +5,7 @@
 // #include "esp_log.h"
 #include "driver/gpio.h"
 #include "ethernet_app.h"
+#include "led_app.h"
 
 #include "nvs.h"
 
@@ -19,12 +20,17 @@ static void eth_event_handler(void *arg, esp_event_base_t event_base,
                               int32_t event_id, void *event_data) {
   esp_netif_t *eth_netif = (esp_netif_t *)arg;
   if (event_base == ETH_EVENT && event_id == ETHERNET_EVENT_CONNECTED) {
+    status_leds_set_network(true);
     esp_netif_dhcpc_stop(eth_netif);
     esp_netif_ip_info_t ip_info;
     ip_info.ip.addr = esp_ip4addr_aton(ip_addr_str);
     ip_info.gw.addr = esp_ip4addr_aton(gw_addr_str);
     ip_info.netmask.addr = esp_ip4addr_aton(netmask_str);
     esp_netif_set_ip_info(eth_netif, &ip_info);
+  } else if (event_base == ETH_EVENT &&
+             (event_id == ETHERNET_EVENT_DISCONNECTED ||
+              event_id == ETHERNET_EVENT_STOP)) {
+    status_leds_set_network(false);
   }
 }
 

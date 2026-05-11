@@ -20,6 +20,7 @@
 #include "lwip/ip4_addr.h"
 
 #include "ethernet_app.h"
+#include "led_app.h"
 #include "sensors_app.h"
 
 #define RESET_BUTTON_PIN 0
@@ -96,6 +97,10 @@ void sensor_polling_task(void *pvParameters)
 {
     while (1)
     {
+        status_leds_set_warning(get_water_leak_status() ||
+                                get_door_open_status_1() ||
+                                get_door_open_status_2());
+
         float temp = get_sensor_temperature();
         if (temp > -100.0)
         {
@@ -334,6 +339,7 @@ void app_main(void)
 {
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
+    ESP_ERROR_CHECK(status_leds_init());
 
     xTaskCreate(factory_reset_task, "reset_task", 2048, NULL, 5, NULL);
 
