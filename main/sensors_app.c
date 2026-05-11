@@ -9,9 +9,8 @@
 static const char *TAG = "SENSORS";
 #define ONEWIRE_BUS_GPIO    32 
 #define WATER_LEAK_GPIO     33
-// Добавляем пины для датчиков открывания дверей
-#define DOOR_OPEN_1_GPIO    25
-#define DOOR_OPEN_2_GPIO    26
+#define DOOR_OPEN_1_GPIO    14
+#define DOOR_OPEN_2_GPIO    15
 
 static ds18b20_device_handle_t ds18b20_dev = NULL;
 

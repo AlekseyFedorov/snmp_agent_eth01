@@ -97,11 +97,14 @@ void sensor_polling_task(void *pvParameters)
 {
     while (1)
     {
+        float temp = get_sensor_temperature();
+        bool temp_alarm = (temp > 45.0);
+
         status_leds_set_warning(get_water_leak_status() ||
                                 get_door_open_status_1() ||
-                                get_door_open_status_2());
+                                get_door_open_status_2() ||
+                                temp_alarm);
 
-        float temp = get_sensor_temperature();
         if (temp > -100.0)
         {
             cached_temp_x10 = (int32_t)(temp * 10);
