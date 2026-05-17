@@ -1,0 +1,713 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1050" viewBox="0 0 1400 1050">
+  <defs>
+    <style>
+      .bg { fill: #f0f3f5; }
+      .title { font: bold 34px Arial, sans-serif; fill: #17212b; }
+      .subtitle { font: 20px Arial, sans-serif; fill: #445566; }
+      .section-title { font: bold 22px Arial, sans-serif; fill: #1d2730; }
+
+      /* Breadboard */
+      .bb-base { fill: #f5deb3; stroke: #c4a97d; stroke-width: 2; }
+      .bb-power-rail { fill: #e8d5b2; stroke: #c4a97d; stroke-width: 1.5; }
+      .bb-row { fill: #f0e4c8; stroke: #ddd; stroke-width: 0.5; }
+      .bb-hole { fill: #d4c4a8; stroke: #bba580; stroke-width: 1; }
+      .bb-groove { fill: #e0d0b0; stroke: #c4a97d; stroke-width: 1.5; }
+
+      /* Module WT32-ETH01 */
+      .module-body { fill: #1b3a5c; stroke: #0f2440; stroke-width: 3; rx: 8; }
+      .module-eth { fill: #2d5a8a; stroke: #1a3d5e; stroke-width: 2; }
+      .module-pin { fill: #f5c542; stroke: #8b6914; stroke-width: 1.5; }
+      .module-pin-label { font: bold 12px Arial, sans-serif; fill: #f5c542; }
+      .module-label { font: bold 16px Arial, sans-serif; fill: #ffffff; }
+
+      /* Components */
+      .comp-body { fill: #2c3e50; stroke: #1a252f; stroke-width: 2.5; }
+      .comp-body-blue { fill: #2471a3; stroke: #1a5276; stroke-width: 2.5; }
+      .comp-body-green { fill: #1e8449; stroke: #145a32; stroke-width: 2.5; }
+      .comp-body-red { fill: #922b21; stroke: #641e16; stroke-width: 2.5; }
+      .comp-body-purple { fill: #6c3483; stroke: #4a235a; stroke-width: 2.5; }
+      .comp-pin { fill: #f5c542; stroke: #8b6914; stroke-width: 1.5; }
+      .comp-lead { fill: #c0c0c0; stroke: #808080; stroke-width: 1.5; }
+
+      /* Sensors */
+      .sensor-body { fill: #ffffff; stroke: #2c3e50; stroke-width: 3; }
+      .sensor-term { fill: #bdc3c7; stroke: #7f8c8d; stroke-width: 2; }
+
+      /* Transistor */
+      .trans-body { fill: #1a1a1a; stroke: #000; stroke-width: 2; }
+
+      /* Resistors */
+      .res-body { fill: #e8c36a; stroke: #b8943a; stroke-width: 2; }
+      .res-band1 { fill: #964b00; }
+      .res-band2 { fill: #000000; }
+      .res-band3 { fill: #ff0000; }
+      .res-band-gold { fill: #daa520; }
+
+      /* LEDs */
+      .led-red { fill: #e74c3c; stroke: #922b21; stroke-width: 2; }
+      .led-green { fill: #2ecc71; stroke: #1e8449; stroke-width: 2; }
+      .led-on { fill: #ffffff; opacity: 0.4; }
+
+      /* Wires - colors */
+      .w-red { fill: none; stroke: #e74c3c; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+      .w-black { fill: none; stroke: #2c3e50; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+      .w-yellow { fill: none; stroke: #f39c12; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+      .w-blue { fill: none; stroke: #2980b9; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+      .w-green { fill: none; stroke: #27ae60; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+      .w-orange { fill: none; stroke: #e67e22; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+      .w-purple { fill: none; stroke: #8e44ad; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+
+      /* Labels */
+      .lbl { font: 16px Arial, sans-serif; fill: #17212b; }
+      .lbl-bold { font: bold 16px Arial, sans-serif; fill: #17212b; }
+      .lbl-small { font: 13px Arial, sans-serif; fill: #445566; }
+      .lbl-tiny { font: 11px Arial, sans-serif; fill: #667788; }
+
+      /* Legend */
+      .legend-box { fill: #ffffff; stroke: #ccd5dd; stroke-width: 2; }
+      .legend-wire { fill: none; stroke-width: 3.5; stroke-linecap: round; }
+
+      /* Connector terminal blocks */
+      .term-block { fill: #2ecc71; stroke: #1e8449; stroke-width: 2; }
+      .term-block-blue { fill: #3498db; stroke: #1a5276; stroke-width: 2; }
+    </style>
+
+    <!-- Arrow marker -->
+    <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#e74c3c"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect class="bg" x="0" y="0" width="1400" height="1050"/>
+
+  <!-- Title -->
+  <text class="title" x="50" y="55">WT32-ETH01 SNMP Agent — Макетная плата (Breadboard)</text>
+  <text class="subtitle" x="50" y="85">Подключение датчиков температуры, протечки, дверей и индикации</text>
+
+  <!-- ============================================================ -->
+  <!-- BREADBOARD -->
+  <!-- ============================================================ -->
+  <g id="breadboard">
+    <!-- Main board -->
+    <rect class="bb-base" x="40" y="120" width="1320" height="560" rx="10"/>
+
+    <!-- Power rails - LEFT + -->
+    <rect class="bb-power-rail" x="55" y="135" width="65" height="530" rx="5"/>
+    <text class="lbl-bold" x="62" y="160" fill="#e74c3c">+</text>
+    <!-- LEFT + holes -->
+    <circle class="bb-hole" cx="87" cy="185" r="4"/><circle class="bb-hole" cx="87" cy="215" r="4"/><circle class="bb-hole" cx="87" cy="245" r="4"/><circle class="bb-hole" cx="87" cy="275" r="4"/><circle class="bb-hole" cx="87" cy="305" r="4"/><circle class="bb-hole" cx="87" cy="335" r="4"/><circle class="bb-hole" cx="87" cy="365" r="4"/><circle class="bb-hole" cx="87" cy="395" r="4"/><circle class="bb-hole" cx="87" cy="425" r="4"/><circle class="bb-hole" cx="87" cy="455" r="4"/><circle class="bb-hole" cx="87" cy="485" r="4"/><circle class="bb-hole" cx="87" cy="515" r="4"/><circle class="bb-hole" cx="87" cy="545" r="4"/><circle class="bb-hole" cx="87" cy="575" r="4"/><circle class="bb-hole" cx="87" cy="605" r="4"/><circle class="bb-hole" cx="87" cy="635" r="4"/>
+
+    <!-- Power rails - LEFT - -->
+    <rect class="bb-power-rail" x="130" y="135" width="65" height="530" rx="5"/>
+    <text class="lbl-bold" x="140" y="160" fill="#2c3e50">−</text>
+    <!-- LEFT - holes -->
+    <circle class="bb-hole" cx="162" cy="185" r="4"/><circle class="bb-hole" cx="162" cy="215" r="4"/><circle class="bb-hole" cx="162" cy="245" r="4"/><circle class="bb-hole" cx="162" cy="275" r="4"/><circle class="bb-hole" cx="162" cy="305" r="4"/><circle class="bb-hole" cx="162" cy="335" r="4"/><circle class="bb-hole" cx="162" cy="365" r="4"/><circle class="bb-hole" cx="162" cy="395" r="4"/><circle class="bb-hole" cx="162" cy="425" r="4"/><circle class="bb-hole" cx="162" cy="455" r="4"/><circle class="bb-hole" cx="162" cy="485" r="4"/><circle class="bb-hole" cx="162" cy="515" r="4"/><circle class="bb-hole" cx="162" cy="545" r="4"/><circle class="bb-hole" cx="162" cy="575" r="4"/><circle class="bb-hole" cx="162" cy="605" r="4"/><circle class="bb-hole" cx="162" cy="635" r="4"/>
+
+    <!-- Central groove -->
+    <rect class="bb-groove" x="208" y="135" width="940" height="530" rx="4"/>
+
+    <!-- Terminal strips - LEFT side (rows a-e) -->
+    <g id="rows-left">
+      <!-- Row labels -->
+      <text class="lbl-tiny" x="218" y="158">a</text>
+      <text class="lbl-tiny" x="218" y="188">b</text>
+      <text class="lbl-tiny" x="218" y="218">c</text>
+      <text class="lbl-tiny" x="218" y="248">d</text>
+      <text class="lbl-tiny" x="218" y="278">e</text>
+      <text class="lbl-tiny" x="218" y="308">f</text>
+      <text class="lbl-tiny" x="218" y="338">g</text>
+      <text class="lbl-tiny" x="218" y="368">h</text>
+      <text class="lbl-tiny" x="218" y="398">i</text>
+      <text class="lbl-tiny" x="218" y="428">j</text>
+      <text class="lbl-tiny" x="218" y="458">k</text>
+      <text class="lbl-tiny" x="218" y="488">l</text>
+      <text class="lbl-tiny" x="218" y="518">m</text>
+      <text class="lbl-tiny" x="218" y="548">n</text>
+      <text class="lbl-tiny" x="218" y="578">o</text>
+      <text class="lbl-tiny" x="218" y="608">p</text>
+      <text class="lbl-tiny" x="218" y="638">q</text>
+
+      <!-- Columns 1..30 holes (left half) - positioned within 230..650 -->
+      <g id="holes-left">
+        <circle class="bb-hole" cx="233" cy="180" r="3.5"/><circle class="bb-hole" cx="233" cy="210" r="3.5"/><circle class="bb-hole" cx="233" cy="240" r="3.5"/><circle class="bb-hole" cx="233" cy="270" r="3.5"/><circle class="bb-hole" cx="233" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="258" cy="180" r="3.5"/><circle class="bb-hole" cx="258" cy="210" r="3.5"/><circle class="bb-hole" cx="258" cy="240" r="3.5"/><circle class="bb-hole" cx="258" cy="270" r="3.5"/><circle class="bb-hole" cx="258" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="283" cy="180" r="3.5"/><circle class="bb-hole" cx="283" cy="210" r="3.5"/><circle class="bb-hole" cx="283" cy="240" r="3.5"/><circle class="bb-hole" cx="283" cy="270" r="3.5"/><circle class="bb-hole" cx="283" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="308" cy="180" r="3.5"/><circle class="bb-hole" cx="308" cy="210" r="3.5"/><circle class="bb-hole" cx="308" cy="240" r="3.5"/><circle class="bb-hole" cx="308" cy="270" r="3.5"/><circle class="bb-hole" cx="308" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="333" cy="180" r="3.5"/><circle class="bb-hole" cx="333" cy="210" r="3.5"/><circle class="bb-hole" cx="333" cy="240" r="3.5"/><circle class="bb-hole" cx="333" cy="270" r="3.5"/><circle class="bb-hole" cx="333" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="358" cy="180" r="3.5"/><circle class="bb-hole" cx="358" cy="210" r="3.5"/><circle class="bb-hole" cx="358" cy="240" r="3.5"/><circle class="bb-hole" cx="358" cy="270" r="3.5"/><circle class="bb-hole" cx="358" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="383" cy="180" r="3.5"/><circle class="bb-hole" cx="383" cy="210" r="3.5"/><circle class="bb-hole" cx="383" cy="240" r="3.5"/><circle class="bb-hole" cx="383" cy="270" r="3.5"/><circle class="bb-hole" cx="383" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="408" cy="180" r="3.5"/><circle class="bb-hole" cx="408" cy="210" r="3.5"/><circle class="bb-hole" cx="408" cy="240" r="3.5"/><circle class="bb-hole" cx="408" cy="270" r="3.5"/><circle class="bb-hole" cx="408" cy="300" r="3.5"/>
+      </g>
+    </g>
+
+    <!-- Terminal strips - RIGHT side (rows f-j) -->
+    <g id="rows-right">
+      <text class="lbl-tiny" x="685" y="158">a</text>
+      <text class="lbl-tiny" x="685" y="188">b</text>
+      <text class="lbl-tiny" x="685" y="218">c</text>
+      <text class="lbl-tiny" x="685" y="248">d</text>
+      <text class="lbl-tiny" x="685" y="278">e</text>
+      <text class="lbl-tiny" x="685" y="308">f</text>
+      <text class="lbl-tiny" x="685" y="338">g</text>
+      <text class="lbl-tiny" x="685" y="368">h</text>
+      <text class="lbl-tiny" x="685" y="398">i</text>
+      <text class="lbl-tiny" x="685" y="428">j</text>
+      <text class="lbl-tiny" x="685" y="458">k</text>
+      <text class="lbl-tiny" x="685" y="488">l</text>
+      <text class="lbl-tiny" x="685" y="518">m</text>
+      <text class="lbl-tiny" x="685" y="548">n</text>
+      <text class="lbl-tiny" x="685" y="578">o</text>
+      <text class="lbl-tiny" x="685" y="608">p</text>
+      <text class="lbl-tiny" x="685" y="638">q</text>
+
+      <g id="holes-right">
+        <circle class="bb-hole" cx="700" cy="180" r="3.5"/><circle class="bb-hole" cx="700" cy="210" r="3.5"/><circle class="bb-hole" cx="700" cy="240" r="3.5"/><circle class="bb-hole" cx="700" cy="270" r="3.5"/><circle class="bb-hole" cx="700" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="725" cy="180" r="3.5"/><circle class="bb-hole" cx="725" cy="210" r="3.5"/><circle class="bb-hole" cx="725" cy="240" r="3.5"/><circle class="bb-hole" cx="725" cy="270" r="3.5"/><circle class="bb-hole" cx="725" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="750" cy="180" r="3.5"/><circle class="bb-hole" cx="750" cy="210" r="3.5"/><circle class="bb-hole" cx="750" cy="240" r="3.5"/><circle class="bb-hole" cx="750" cy="270" r="3.5"/><circle class="bb-hole" cx="750" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="775" cy="180" r="3.5"/><circle class="bb-hole" cx="775" cy="210" r="3.5"/><circle class="bb-hole" cx="775" cy="240" r="3.5"/><circle class="bb-hole" cx="775" cy="270" r="3.5"/><circle class="bb-hole" cx="775" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="800" cy="180" r="3.5"/><circle class="bb-hole" cx="800" cy="210" r="3.5"/><circle class="bb-hole" cx="800" cy="240" r="3.5"/><circle class="bb-hole" cx="800" cy="270" r="3.5"/><circle class="bb-hole" cx="800" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="825" cy="180" r="3.5"/><circle class="bb-hole" cx="825" cy="210" r="3.5"/><circle class="bb-hole" cx="825" cy="240" r="3.5"/><circle class="bb-hole" cx="825" cy="270" r="3.5"/><circle class="bb-hole" cx="825" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="850" cy="180" r="3.5"/><circle class="bb-hole" cx="850" cy="210" r="3.5"/><circle class="bb-hole" cx="850" cy="240" r="3.5"/><circle class="bb-hole" cx="850" cy="270" r="3.5"/><circle class="bb-hole" cx="850" cy="300" r="3.5"/>
+        <circle class="bb-hole" cx="875" cy="180" r="3.5"/><circle class="bb-hole" cx="875" cy="210" r="3.5"/><circle class="bb-hole" cx="875" cy="240" r="3.5"/><circle class="bb-hole" cx="875" cy="270" r="3.5"/><circle class="bb-hole" cx="875" cy="300" r="3.5"/>
+      </g>
+    </g>
+
+    <!-- Power rails - RIGHT + -->
+    <rect class="bb-power-rail" x="1200" y="135" width="65" height="530" rx="5"/>
+    <text class="lbl-bold" x="1210" y="160" fill="#e74c3c">+</text>
+    <!-- RIGHT + holes -->
+    <circle class="bb-hole" cx="1232" cy="185" r="4"/><circle class="bb-hole" cx="1232" cy="215" r="4"/><circle class="bb-hole" cx="1232" cy="245" r="4"/><circle class="bb-hole" cx="1232" cy="275" r="4"/><circle class="bb-hole" cx="1232" cy="305" r="4"/><circle class="bb-hole" cx="1232" cy="335" r="4"/><circle class="bb-hole" cx="1232" cy="365" r="4"/><circle class="bb-hole" cx="1232" cy="395" r="4"/><circle class="bb-hole" cx="1232" cy="425" r="4"/><circle class="bb-hole" cx="1232" cy="455" r="4"/><circle class="bb-hole" cx="1232" cy="485" r="4"/><circle class="bb-hole" cx="1232" cy="515" r="4"/><circle class="bb-hole" cx="1232" cy="545" r="4"/><circle class="bb-hole" cx="1232" cy="575" r="4"/><circle class="bb-hole" cx="1232" cy="605" r="4"/><circle class="bb-hole" cx="1232" cy="635" r="4"/>
+
+    <!-- Power rails - RIGHT - -->
+    <rect class="bb-power-rail" x="1275" y="135" width="65" height="530" rx="5"/>
+    <text class="lbl-bold" x="1285" y="160" fill="#2c3e50">−</text>
+    <!-- RIGHT - holes -->
+    <circle class="bb-hole" cx="1307" cy="185" r="4"/><circle class="bb-hole" cx="1307" cy="215" r="4"/><circle class="bb-hole" cx="1307" cy="245" r="4"/><circle class="bb-hole" cx="1307" cy="275" r="4"/><circle class="bb-hole" cx="1307" cy="305" r="4"/><circle class="bb-hole" cx="1307" cy="335" r="4"/><circle class="bb-hole" cx="1307" cy="365" r="4"/><circle class="bb-hole" cx="1307" cy="395" r="4"/><circle class="bb-hole" cx="1307" cy="425" r="4"/><circle class="bb-hole" cx="1307" cy="455" r="4"/><circle class="bb-hole" cx="1307" cy="485" r="4"/><circle class="bb-hole" cx="1307" cy="515" r="4"/><circle class="bb-hole" cx="1307" cy="545" r="4"/><circle class="bb-hole" cx="1307" cy="575" r="4"/><circle class="bb-hole" cx="1307" cy="605" r="4"/><circle class="bb-hole" cx="1307" cy="635" r="4"/>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- WT32-ETH01 MODULE (placed on breadboard) -->
+  <!-- ============================================================ -->
+  <g id="wt32-module" transform="translate(500, 195)">
+    <!-- PCB body -->
+    <rect class="module-body" x="0" y="0" width="280" height="220" rx="10"/>
+
+    <!-- Ethernet jack area -->
+    <rect class="module-eth" x="185" y="10" width="85" height="60" rx="6"/>
+    <text class="module-label" font-size="10" x="195" y="40">ETH</text>
+    <text class="module-label" font-size="10" x="195" y="55">LAN8720</text>
+
+    <!-- ESP32 chip area -->
+    <rect fill="#0d1b2a" x="20" y="15" width="120" height="70" rx="4" opacity="0.5"/>
+    <text class="module-label" font-size="12" x="35" y="55">ESP32</text>
+
+    <!-- Pin headers - LEFT side -->
+    <g id="pins-left">
+      <!-- 5V -->
+      <rect class="module-pin" x="-15" y="10" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="-12" y="8" font-size="8">5V</text>
+
+      <!-- 3V3 -->
+      <rect class="module-pin" x="-15" y="24" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="-12" y="22" font-size="8">3V3</text>
+
+      <!-- GND -->
+      <rect class="module-pin" x="-15" y="38" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="-12" y="36" font-size="8">GND</text>
+
+      <!-- IO32 -->
+      <rect class="module-pin" x="-15" y="52" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="-12" y="50" font-size="8">32</text>
+
+      <!-- IO33 -->
+      <rect class="module-pin" x="-15" y="66" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="-12" y="64" font-size="8">33</text>
+
+      <!-- IO14 -->
+      <rect class="module-pin" x="-15" y="80" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="-12" y="78" font-size="8">14</text>
+
+      <!-- IO15 -->
+      <rect class="module-pin" x="-15" y="94" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="-12" y="92" font-size="8">15</text>
+
+      <!-- IO2 -->
+      <rect class="module-pin" x="-15" y="108" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="-12" y="106" font-size="8">2</text>
+
+      <!-- IO4 -->
+      <rect class="module-pin" x="-15" y="122" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="-12" y="120" font-size="8">4</text>
+
+      <!-- IO0 (Reset) -->
+      <rect class="module-pin" x="-15" y="136" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="-12" y="134" font-size="8">0</text>
+
+      <!-- IO16 -->
+      <rect class="module-pin" x="-15" y="150" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="-12" y="148" font-size="8">16</text>
+
+      <!-- GND (extra) -->
+      <rect class="module-pin" x="-15" y="164" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="-12" y="162" font-size="8">GND</text>
+    </g>
+
+    <!-- Pin headers - RIGHT side (Ethernet side, fewer GPIOs) -->
+    <g id="pins-right">
+      <rect class="module-pin" x="280" y="10" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="282" y="8" font-size="8">EN</text>
+      <rect class="module-pin" x="280" y="24" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="282" y="22" font-size="8">GND</text>
+      <rect class="module-pin" x="280" y="75" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="282" y="73" font-size="8">MDC 23</text>
+      <rect class="module-pin" x="280" y="90" width="15" height="8" rx="2"/>
+      <text class="module-pin-label" x="282" y="88" font-size="8">MDIO 18</text>
+    </g>
+
+    <!-- Antenna area -->
+    <rect fill="#1a5276" x="20" y="155" width="60" height="20" rx="3"/>
+    <text class="module-label" font-size="9" x="25" y="169">WiFi/BT</text>
+
+    <!-- Module label -->
+    <text class="module-label" font-size="18" x="50" y="200">WT32-ETH01</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- POWER SUPPLY -->
+  <!-- ============================================================ -->
+  <g id="power" transform="translate(40, 740)">
+    <rect fill="#ffffff" stroke="#2c3e50" stroke-width="2" x="0" y="0" width="180" height="80" rx="8"/>
+    <text class="lbl-bold" x="20" y="30">Блок питания 5V</text>
+    <text class="lbl-small" x="20" y="52">USB / внешний 5V DC</text>
+    <text class="lbl-small" x="20" y="70">Общий +5V и GND</text>
+
+    <!-- Terminals -->
+    <rect fill="#e74c3c" x="130" y="15" width="30" height="25" rx="3"/>
+    <text fill="#fff" font-size="12" x="136" y="33">+5V</text>
+    <rect fill="#2c3e50" x="130" y="48" width="30" height="25" rx="3"/>
+    <text fill="#fff" font-size="12" x="136" y="66">GND</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- DS18B20 TEMPERATURE SENSOR -->
+  <!-- ============================================================ -->
+  <g id="ds18b20" transform="translate(40, 180)">
+    <rect class="sensor-body" x="0" y="0" width="130" height="100" rx="10"/>
+    <text class="lbl-bold" x="12" y="30">DS18B20</text>
+    <text class="lbl-small" x="12" y="50">Датчик</text>
+    <text class="lbl-small" x="12" y="68">температуры</text>
+    <text class="lbl-tiny" x="12" y="85">1-Wire, −55..+125°C</text>
+
+    <!-- 3 pins: VDD, DQ, GND -->
+    <rect class="comp-pin" x="60" y="100" width="20" height="12" rx="2"/>
+    <rect class="comp-pin" x="85" y="100" width="20" height="12" rx="2"/>
+    <rect class="comp-pin" x="110" y="100" width="20" height="12" rx="2"/>
+    <text class="lbl-tiny" x="62" y="125">VDD</text>
+    <text class="lbl-tiny" x="89" y="125">DQ</text>
+    <text class="lbl-tiny" x="112" y="125">GND</text>
+  </g>
+
+  <!-- 4.7kΩ Pullup Resistor for DS18B20 -->
+  <g id="r-pullup" transform="translate(60, 330)">
+    <rect fill="#e8c36a" x="0" y="0" width="12" height="50" rx="3"/>
+    <rect fill="#964b00" x="0" y="8" width="12" height="8"/>
+    <rect fill="#000000" x="0" y="20" width="12" height="8"/>
+    <rect fill="#ff0000" x="0" y="32" width="12" height="8"/>
+    <rect fill="#daa520" x="0" y="44" width="12" height="8"/>
+    <text class="lbl-tiny" x="16" y="22">R-pull</text>
+    <text class="lbl-tiny" x="16" y="36">4.7kΩ</text>
+    <line x1="6" y1="-10" x2="6" y2="0" stroke="#c0c0c0" stroke-width="2"/>
+    <line x1="6" y1="50" x2="6" y2="60" stroke="#c0c0c0" stroke-width="2"/>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- H2O WATER LEAK SENSOR + TRANSISTOR -->
+  <!-- ============================================================ -->
+  <g id="h2o-sensor" transform="translate(40, 430)">
+    <rect class="sensor-body" x="0" y="0" width="130" height="80" rx="10"/>
+    <text class="lbl-bold" x="8" y="25">H2O-Контакт</text>
+    <text class="lbl-small" x="8" y="45">Датчик протечки</text>
+    <text class="lbl-tiny" x="8" y="62">Питание 5−24V</text>
+    <text class="lbl-tiny" x="8" y="77">Двухпроводный</text>
+
+    <!-- 2 terminals: +, - -->
+    <rect fill="#e74c3c" x="30" y="80" width="25" height="15" rx="3"/>
+    <text fill="#fff" font-size="10" x="35" y="92">+</text>
+    <rect fill="#2980b9" x="80" y="80" width="25" height="15" rx="3"/>
+    <text fill="#fff" font-size="10" x="85" y="92">−</text>
+  </g>
+
+  <!-- Transistor NPN (2N2222 / BC547) -->
+  <g id="transistor" transform="translate(140, 565)">
+    <!-- Transistor body (TO-92) -->
+    <path d="M0,0 Q15,-10 30,0 L30,40 Q15,50 0,40 Z" fill="#1a1a1a" stroke="#000" stroke-width="2"/>
+    <!-- Flat face indicator -->
+    <line x1="5" y1="5" x2="5" y2="35" stroke="#444" stroke-width="1.5"/>
+    <!-- Pins: C, B, E -->
+    <line x1="10" y1="40" x2="10" y2="62" stroke="#c0c0c0" stroke-width="2.5"/>
+    <line x1="15" y1="40" x2="15" y2="62" stroke="#c0c0c0" stroke-width="2.5"/>
+    <line x1="20" y1="40" x2="20" y2="62" stroke="#c0c0c0" stroke-width="2.5"/>
+    <text class="lbl-tiny" x="-2" y="72">C</text>
+    <text class="lbl-tiny" x="12" y="72">B</text>
+    <text class="lbl-tiny" x="26" y="72">E</text>
+    <text class="lbl-tiny" x="32" y="42">NPN</text>
+    <text class="lbl-tiny" x="32" y="55">2N2222</text>
+  </g>
+
+  <!-- Base resistor 10kΩ -->
+  <g id="r-base" transform="translate(185, 545)">
+    <rect fill="#e8c36a" x="0" y="0" width="10" height="40" rx="3"/>
+    <rect fill="#964b00" x="0" y="6" width="10" height="6"/>
+    <rect fill="#000000" x="0" y="16" width="10" height="6"/>
+    <rect fill="#ff8c00" x="0" y="26" width="10" height="6"/>
+    <rect fill="#daa520" x="0" y="35" width="10" height="6"/>
+    <text class="lbl-tiny" x="14" y="18">R-base</text>
+    <text class="lbl-tiny" x="14" y="30">10kΩ</text>
+  </g>
+
+  <!-- Pull-down resistor 10kΩ -->
+  <g id="r-pd" transform="translate(215, 590)">
+    <rect fill="#e8c36a" x="0" y="0" width="10" height="40" rx="3"/>
+    <rect fill="#964b00" x="0" y="6" width="10" height="6"/>
+    <rect fill="#000000" x="0" y="16" width="10" height="6"/>
+    <rect fill="#ff8c00" x="0" y="26" width="10" height="6"/>
+    <rect fill="#daa520" x="0" y="35" width="10" height="6"/>
+    <text class="lbl-tiny" x="14" y="18">R-pd</text>
+    <text class="lbl-tiny" x="14" y="30">10kΩ</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- DOOR SENSORS (Reed switches) -->
+  <!-- ============================================================ -->
+  <g id="door1" transform="translate(40, 600)">
+    <rect class="sensor-body" x="0" y="0" width="130" height="70" rx="10"/>
+    <text class="lbl-bold" x="8" y="22">Геркон Дверь 1</text>
+    <text class="lbl-small" x="8" y="40">Магнитоконтактный</text>
+    <text class="lbl-tiny" x="8" y="55">Сухой контакт (NO)</text>
+
+    <!-- 2 terminals -->
+    <rect fill="#bdc3c7" x="45" y="70" width="18" height="12" rx="2"/>
+    <rect fill="#bdc3c7" x="70" y="70" width="18" height="12" rx="2"/>
+    <text class="lbl-tiny" x="48" y="92">A</text>
+    <text class="lbl-tiny" x="73" y="92">B</text>
+  </g>
+
+  <g id="door2" transform="translate(40, 695)">
+    <rect class="sensor-body" x="0" y="0" width="130" height="70" rx="10"/>
+    <text class="lbl-bold" x="8" y="22">Геркон Дверь 2</text>
+    <text class="lbl-small" x="8" y="40">Магнитоконтактный</text>
+    <text class="lbl-tiny" x="8" y="55">Сухой контакт (NO)</text>
+
+    <!-- 2 terminals -->
+    <rect fill="#bdc3c7" x="45" y="70" width="18" height="12" rx="2"/>
+    <rect fill="#bdc3c7" x="70" y="70" width="18" height="12" rx="2"/>
+    <text class="lbl-tiny" x="48" y="92">A</text>
+    <text class="lbl-tiny" x="73" y="92">B</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- LEDS -->
+  <!-- ============================================================ -->
+  <!-- Network LED (green) -->
+  <g id="led-net" transform="translate(1060, 180)">
+    <circle class="led-green" cx="20" cy="20" r="16"/>
+    <circle class="led-on" cx="14" cy="14" r="6"/>
+    <text class="lbl-bold" x="-8" y="55">LED Сеть</text>
+    <text class="lbl-small" x="-8" y="72">Зелёный</text>
+    <!-- Cathode / Anode -->
+    <line x1="10" y1="36" x2="10" y2="52" stroke="#c0c0c0" stroke-width="2"/>
+    <line x1="30" y1="36" x2="30" y2="52" stroke="#c0c0c0" stroke-width="2"/>
+    <text class="lbl-tiny" x="0" y="62">−</text>
+    <text class="lbl-tiny" x="34" y="62">+</text>
+  </g>
+
+  <!-- Resistor 330Ω for LED Network -->
+  <g id="r-net" transform="translate(1030, 225)">
+    <rect fill="#e8c36a" x="0" y="0" width="10" height="30" rx="3"/>
+    <rect fill="#ff8c00" x="0" y="5" width="10" height="5"/>
+    <rect fill="#ff8c00" x="0" y="13" width="10" height="5"/>
+    <rect fill="#964b00" x="0" y="21" width="10" height="5"/>
+    <rect fill="#daa520" x="0" y="27" width="10" height="5"/>
+    <text class="lbl-tiny" x="14" y="18">330Ω</text>
+  </g>
+
+  <!-- Alarm LED (red) -->
+  <g id="led-alarm" transform="translate(1060, 300)">
+    <circle class="led-red" cx="20" cy="20" r="16"/>
+    <circle class="led-on" cx="14" cy="14" r="6"/>
+    <text class="lbl-bold" x="-10" y="55">LED Авария</text>
+    <text class="lbl-small" x="-10" y="72">Красный</text>
+    <line x1="10" y1="36" x2="10" y2="52" stroke="#c0c0c0" stroke-width="2"/>
+    <line x1="30" y1="36" x2="30" y2="52" stroke="#c0c0c0" stroke-width="2"/>
+    <text class="lbl-tiny" x="0" y="62">−</text>
+    <text class="lbl-tiny" x="34" y="62">+</text>
+  </g>
+
+  <!-- Resistor 330Ω for LED Alarm -->
+  <g id="r-alarm" transform="translate(1030, 345)">
+    <rect fill="#e8c36a" x="0" y="0" width="10" height="30" rx="3"/>
+    <rect fill="#ff8c00" x="0" y="5" width="10" height="5"/>
+    <rect fill="#ff8c00" x="0" y="13" width="10" height="5"/>
+    <rect fill="#964b00" x="0" y="21" width="10" height="5"/>
+    <rect fill="#daa520" x="0" y="27" width="10" height="5"/>
+    <text class="lbl-tiny" x="14" y="18">330Ω</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- RESET BUTTON -->
+  <!-- ============================================================ -->
+  <g id="reset-btn" transform="translate(1080, 490)">
+    <rect fill="#7f8c8d" x="0" y="0" width="40" height="30" rx="5"/>
+    <circle fill="#e74c3c" cx="20" cy="15" r="10"/>
+    <text class="lbl-small" x="-10" y="48">Кнопка</text>
+    <text class="lbl-small" x="-10" y="62">Сброс</text>
+    <text class="lbl-tiny" x="-10" y="75">GPIO 0</text>
+    <text class="lbl-tiny" x="-10" y="87">5 сек = Reset</text>
+    <!-- pins -->
+    <line x1="12" y1="30" x2="12" y2="45" stroke="#c0c0c0" stroke-width="2"/>
+    <line x1="28" y1="30" x2="28" y2="45" stroke="#c0c0c0" stroke-width="2"/>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- WIRING CONNECTIONS -->
+  <!-- ============================================================ -->
+
+  <!-- POWER CONNECTIONS -->
+  <!-- 5V from PSU to WT32-ETH01 5V -->
+  <path class="w-red" d="M170,755 L170,785 L480,785 L480,400 L485,400"/>
+  <text class="lbl-tiny" fill="#e74c3c" x="280" y="798">5V питание платы</text>
+
+  <!-- 5V from PSU to LEFT + rail -->
+  <path class="w-red" d="M170,748 L87,748 L87,668"/>
+  <text class="lbl-tiny" fill="#e74c3c" x="92" y="760">+5V на шину</text>
+
+  <!-- GND from PSU to LEFT - rail -->
+  <path class="w-black" d="M200,773 L200,820 L162,820 L162,668"/>
+  <text class="lbl-tiny" fill="#2c3e50" x="167" y="835">GND на шину</text>
+
+  <!-- GND from LEFT - rail to WT32 GND -->
+  <path class="w-black" d="M162,390 L300,390 L300,380 L485,380"/>
+
+  <!-- ===== DS18B20 CONNECTIONS ===== -->
+  <!-- VDD (3.3V) from WT32 3V3 to DS18B20 VDD -->
+  <path class="w-red" d="M485,222 L400,222 L350,222 L300,222 L200,222 L180,292"/>
+  <text class="lbl-tiny" fill="#e74c3c" x="310" y="215">3.3V → DS18B20 VDD</text>
+
+  <!-- GND from WT32 GND to DS18B20 GND -->
+  <path class="w-black" d="M485,242 L460,242 L350,242 L300,242 L200,242 L180,305"/>
+
+  <!-- DQ from DS18B20 to WT32 IO32 -->
+  <path class="w-yellow" d="M108,305 L108,270 L485,250"/>
+  <text class="lbl-tiny" fill="#f39c12" x="200" y="263">1-Wire данные → GPIO 32</text>
+
+  <!-- 4.7kΩ pullup: between 3.3V and DQ -->
+  <path class="w-red" d="M66,320 L66,292 L88,292"/>
+  <path class="w-yellow" d="M66,380 L66,400 L88,400 L100,310"/>
+
+  <!-- ===== H2O WATER LEAK SENSOR CONNECTIONS ===== -->
+  <!-- 5V from LEFT + rail to H2O + terminal -->
+  <path class="w-red" d="M87,470 L87,490 L80,492 L72,525"/>
+  <text class="lbl-tiny" fill="#e74c3c" x="92" y="485">+5V → H2O+</text>
+
+  <!-- H2O - terminal to base resistor R-base -->
+  <path class="w-blue" d="M120,510 L120,530 L195,530 L195,545"/>
+
+  <!-- R-base to transistor Base -->
+  <path class="w-blue" d="M195,585 L195,595 L155,595 L155,607"/>
+
+  <!-- Transistor Emitter to GND (through R-pd) -->
+  <path class="w-black" d="M160,627 L160,635 L225,635 L225,630"/>
+
+  <!-- R-pd to GND -->
+  <path class="w-black" d="M225,630 L225,620 L162,620"/>
+
+  <!-- Transistor Collector to WT32 IO33 -->
+  <path class="w-green" d="M150,607 L150,595 L130,595 L130,590 L485,264"/>
+  <text class="lbl-tiny" fill="#27ae60" x="260" y="588">Коллектор → GPIO 33</text>
+
+  <!-- ===== DOOR SENSOR CONNECTIONS ===== -->
+  <!-- Door 1 terminal A to WT32 IO14 -->
+  <path class="w-orange" d="M85,670 L85,685 L350,685 L350,278 L485,278"/>
+  <text class="lbl-tiny" fill="#e67e22" x="200" y="698">Дверь 1 → GPIO 14</text>
+
+  <!-- Door 1 terminal B to GND -->
+  <path class="w-black" d="M112,682 L112,710 L162,710 L162,668"/>
+
+  <!-- Door 2 terminal A to WT32 IO15 -->
+  <path class="w-orange" d="M85,765 L85,780 L350,780 L350,292 L485,292"/>
+  <text class="lbl-tiny" fill="#e67e22" x="200" y="793">Дверь 2 → GPIO 15</text>
+
+  <!-- Door 2 terminal B to GND -->
+  <path class="w-black" d="M112,777 L112,800 L162,800 L162,668"/>
+
+  <!-- ===== LED CONNECTIONS ===== -->
+  <!-- LED Network: Anode via 330Ω to IO2, Cathode to GND -->
+  <path class="w-green" d="M485,306 L900,306 L1030,306 L1030,248"/>
+  <path class="w-green" d="M1040,248 L1060,248 L1060,232"/>
+  <path class="w-black" d="M1080,232 L1080,220 L1100,220 L1100,248 L1080,248 L1080,255 L1040,255 L1040,260 L162,260"/>
+
+  <!-- LED Alarm: Anode via 330Ω to IO4, Cathode to GND -->
+  <path class="w-purple" d="M485,320 L950,320 L1030,320 L1030,368"/>
+  <path class="w-purple" d="M1040,368 L1060,368 L1060,352"/>
+  <path class="w-black" d="M1080,352 L1080,340 L1100,340 L1100,368 L1080,368 L1080,375 L1040,375 L1040,380 L162,380"/>
+
+  <!-- ===== RESET BUTTON ===== -->
+  <!-- Button pin A to WT32 IO0 -->
+  <path class="w-black" d="M1092,505 L1092,475 L1100,475 L1100,505 L485,334"/>
+
+  <!-- Button pin B to GND -->
+  <path class="w-black" d="M1120,505 L1120,508 L1130,508 L1130,505 L1130,500 L162,500"/>
+
+  <!-- ============================================================ -->
+  <!-- LEGEND -->
+  <!-- ============================================================ -->
+  <g id="legend" transform="translate(920, 750)">
+    <rect class="legend-box" x="0" y="0" width="420" height="275" rx="10"/>
+    <text class="section-title" x="15" y="35">Условные обозначения</text>
+
+    <!-- Red wire -->
+    <line x1="15" y1="58" x2="60" y2="58" class="w-red"/>
+    <text class="lbl" x="70" y="64">Питание (+5V, +3.3V)</text>
+
+    <!-- Black wire -->
+    <line x1="15" y1="88" x2="60" y2="88" class="w-black"/>
+    <text class="lbl" x="70" y="94">Общий минус (GND)</text>
+
+    <!-- Yellow wire -->
+    <line x1="15" y1="118" x2="60" y2="118" class="w-yellow"/>
+    <text class="lbl" x="70" y="124">1-Wire данные (DS18B20)</text>
+
+    <!-- Blue wire -->
+    <line x1="15" y1="148" x2="60" y2="148" class="w-blue"/>
+    <text class="lbl" x="70" y="154">Сигнал протечки (H2O → база транзистора)</text>
+
+    <!-- Green wire -->
+    <line x1="15" y1="178" x2="60" y2="178" class="w-green"/>
+    <text class="lbl" x="70" y="184">Коллектор транзистора, LED Сеть</text>
+
+    <!-- Orange wire -->
+    <line x1="15" y1="208" x2="60" y2="208" class="w-orange"/>
+    <text class="lbl" x="70" y="214">Датчики дверей (Герконы)</text>
+
+    <!-- Purple wire -->
+    <line x1="15" y1="238" x2="60" y2="238" class="w-purple"/>
+    <text class="lbl" x="70" y="244">LED Авария</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- IMPORTANT NOTES -->
+  <!-- ============================================================ -->
+  <g id="notes" transform="translate(920, 575)">
+    <text class="section-title" x="0" y="0">Важные замечания</text>
+    <text class="lbl-small" x="0" y="25">• Все земли (GND) платы, датчиков и БП — общие.</text>
+    <text class="lbl-small" x="0" y="45">• H2O датчик: без транзистора — сожжёт GPIO (5−24V).</text>
+    <text class="lbl-small" x="0" y="65">• Подтяжка DS18B20: 4.7кОм между VDD и DQ обязательна.</text>
+    <text class="lbl-small" x="0" y="85">• Герконы: не требуют внешнего питания.</text>
+    <text class="lbl-small" x="0" y="105">• Резисторы LED: 220−470 Ом (без них — сгорят).</text>
+    <text class="lbl-small" x="0" y="125">• IO14/IO15 помечены как свободные на WT32-ETH01.</text>
+    <text class="lbl-small" x="0" y="145">• IO25/IO26 заняты RMII — НЕ ИСПОЛЬЗОВАТЬ!</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- PIN TABLE (bottom-right) -->
+  <!-- ============================================================ -->
+  <g id="pin-table" transform="translate(315, 840)">
+    <text class="section-title" x="0" y="0">Распиновка WT32-ETH01</text>
+
+    <!-- Table header -->
+    <rect fill="#2c3e50" x="0" y="12" width="330" height="26" rx="3"/>
+    <text fill="#fff" font-size="12" font-weight="bold" x="8" y="30">GPIO</text>
+    <text fill="#fff" font-size="12" font-weight="bold" x="80" y="30">Функция</text>
+    <text fill="#fff" font-size="12" font-weight="bold" x="230" y="30">Примечание</text>
+
+    <!-- Rows -->
+    <rect fill="#f8f9fa" stroke="#ddd" stroke-width="0.5" x="0" y="38" width="330" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="53">32</text>
+    <text font-size="11" fill="#f39c12" x="80" y="53">DS18B20 DQ</text>
+    <text font-size="11" fill="#445566" x="230" y="53">1-Wire, pull-up 4.7kΩ</text>
+
+    <rect fill="#fff" stroke="#ddd" stroke-width="0.5" x="0" y="60" width="330" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="75">33</text>
+    <text font-size="11" fill="#2980b9" x="80" y="75">H2O Протечка</text>
+    <text font-size="11" fill="#445566" x="230" y="75">Через NPN-транзистор</text>
+
+    <rect fill="#f8f9fa" stroke="#ddd" stroke-width="0.5" x="0" y="82" width="330" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="97">14</text>
+    <text font-size="11" fill="#e67e22" x="80" y="97">Дверь 1</text>
+    <text font-size="11" fill="#445566" x="230" y="97">Геркон, PULLUP</text>
+
+    <rect fill="#fff" stroke="#ddd" stroke-width="0.5" x="0" y="104" width="330" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="119">15</text>
+    <text font-size="11" fill="#e67e22" x="80" y="119">Дверь 2</text>
+    <text font-size="11" fill="#445566" x="230" y="119">Геркон, PULLUP</text>
+
+    <rect fill="#f8f9fa" stroke="#ddd" stroke-width="0.5" x="0" y="126" width="330" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="141">2</text>
+    <text font-size="11" fill="#27ae60" x="80" y="141">LED Сеть</text>
+    <text font-size="11" fill="#445566" x="230" y="141">Через 330Ω</text>
+
+    <rect fill="#fff" stroke="#ddd" stroke-width="0.5" x="0" y="148" width="330" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="163">4</text>
+    <text font-size="11" fill="#8e44ad" x="80" y="163">LED Авария</text>
+    <text font-size="11" fill="#445566" x="230" y="163">Через 330Ω</text>
+
+    <rect fill="#f8f9fa" stroke="#ddd" stroke-width="0.5" x="0" y="170" width="330" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="185">0</text>
+    <text font-size="11" fill="#7f8c8d" x="80" y="185">Кнопка сброса</text>
+    <text font-size="11" fill="#445566" x="230" y="185">5 сек = Factory Reset</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- SNMP OID TABLE (bottom-left) -->
+  <!-- ============================================================ -->
+  <g id="oid-table" transform="translate(40, 840)">
+    <text class="section-title" x="0" y="0">SNMP OID карта (.1.3.6.1.4.1.9999.1)</text>
+
+    <rect fill="#2c3e50" x="0" y="12" width="250" height="26" rx="3"/>
+    <text fill="#fff" font-size="12" font-weight="bold" x="8" y="30">OID</text>
+    <text fill="#fff" font-size="12" font-weight="bold" x="70" y="30">Тип</text>
+    <text fill="#fff" font-size="12" font-weight="bold" x="170" y="30">Описание</text>
+
+    <rect fill="#f8f9fa" stroke="#ddd" stroke-width="0.5" x="0" y="38" width="250" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="53">.1.0</text>
+    <text font-size="11" fill="#445566" x="70" y="53">INTEGER</text>
+    <text font-size="11" fill="#17212b" x="170" y="53">Температура ×10°C</text>
+
+    <rect fill="#fff" stroke="#ddd" stroke-width="0.5" x="0" y="60" width="250" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="75">.2.0</text>
+    <text font-size="11" fill="#445566" x="70" y="75">GAUGE32</text>
+    <text font-size="11" fill="#17212b" x="170" y="75">Свободная куча</text>
+
+    <rect fill="#f8f9fa" stroke="#ddd" stroke-width="0.5" x="0" y="82" width="250" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="97">.3.0</text>
+    <text font-size="11" fill="#445566" x="70" y="97">TIMETICKS</text>
+    <text font-size="11" fill="#17212b" x="170" y="97">Uptime</text>
+
+    <rect fill="#fff" stroke="#ddd" stroke-width="0.5" x="0" y="104" width="250" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="119">.4.0</text>
+    <text font-size="11" fill="#445566" x="70" y="119">GAUGE32</text>
+    <text font-size="11" fill="#17212b" x="170" y="119">Heap used %</text>
+
+    <rect fill="#f8f9fa" stroke="#ddd" stroke-width="0.5" x="0" y="126" width="250" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="141">.5.0</text>
+    <text font-size="11" fill="#445566" x="70" y="141">OCTET STR</text>
+    <text font-size="11" fill="#17212b" x="170" y="141">MAC-адрес</text>
+
+    <rect fill="#fff" stroke="#ddd" stroke-width="0.5" x="0" y="148" width="250" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="163">.6.0</text>
+    <text font-size="11" fill="#445566" x="70" y="163">INTEGER</text>
+    <text font-size="11" fill="#17212b" x="170" y="163">Протечка (0/1)</text>
+
+    <rect fill="#f8f9fa" stroke="#ddd" stroke-width="0.5" x="0" y="170" width="250" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="185">.7.0</text>
+    <text font-size="11" fill="#445566" x="70" y="185">INTEGER</text>
+    <text font-size="11" fill="#17212b" x="170" y="185">Дверь 1 (0/1)</text>
+
+    <rect fill="#fff" stroke="#ddd" stroke-width="0.5" x="0" y="192" width="250" height="22"/>
+    <text font-size="11" fill="#17212b" x="8" y="207">.8.0</text>
+    <text font-size="11" fill="#445566" x="70" y="207">INTEGER</text>
+    <text font-size="11" fill="#17212b" x="170" y="207">Дверь 2 (0/1)</text>
+  </g>
+
+</svg>
