@@ -23,7 +23,7 @@
 #include "led_app.h"
 #include "sensors_app.h"
 
-#define RESET_BUTTON_PIN 0
+#define RESET_BUTTON_PIN 5
 
 #ifndef SNMP_READ_COMMUNITY
 #define SNMP_READ_COMMUNITY "public"
@@ -356,7 +356,7 @@ void app_main(void)
         syslocation_len = strlen((char*)syslocation_storage);
 
         snmp_set_community(SNMP_READ_COMMUNITY);
-        snmp_set_community_write(SNMP_WRITE_COMMUNITY); // Исправлено имя функции
+        snmp_set_community_write(SNMP_WRITE_COMMUNITY);
 
         snmp_mib2_set_syscontact(syscontact_storage, &syscontact_len, sizeof(syscontact_storage));
         snmp_mib2_set_syslocation(syslocation_storage, &syslocation_len, sizeof(syslocation_storage));

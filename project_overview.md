@@ -85,7 +85,7 @@ dependencies:
 #include "led_app.h"
 #include "sensors_app.h"
 
-#define RESET_BUTTON_PIN 0
+#define RESET_BUTTON_PIN 5
 
 #ifndef SNMP_READ_COMMUNITY
 #define SNMP_READ_COMMUNITY "public"
