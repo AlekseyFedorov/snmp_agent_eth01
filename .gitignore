@@ -7,3 +7,4 @@ sdkconfig.old
 .idea
 dependencies.lock
 handler_log.txt
+sdkconfig
