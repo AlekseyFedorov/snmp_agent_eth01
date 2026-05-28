@@ -19,6 +19,8 @@ void sensors_init(void) {
     gpio_reset_pin(WATER_LEAK_GPIO);
     gpio_set_direction(WATER_LEAK_GPIO, GPIO_MODE_INPUT);
     gpio_set_pull_mode(WATER_LEAK_GPIO, GPIO_PULLUP_ONLY);
+    ESP_LOGI(TAG, "Water leak sensor initialized on GPIO %d", WATER_LEAK_GPIO);
+
 
      // Инициализация датчиков открывания дверей
     gpio_reset_pin(DOOR_OPEN_1_GPIO);

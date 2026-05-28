@@ -99,11 +99,16 @@ void sensor_polling_task(void *pvParameters)
     {
         float temp = get_sensor_temperature();
         bool temp_alarm = (temp > 45.0);
+        int leak_status = get_water_leak_status();
 
-        status_leds_set_warning(get_water_leak_status() ||
+        status_leds_set_warning(leak_status ||
                                 get_door_open_status_1() ||
                                 get_door_open_status_2() ||
                                 temp_alarm);
+
+        ESP_LOGI(TAG, "Water leak sensor status: %s (%d)", 
+                 leak_status ? "🚨 ALARM (LEAK DETECTED!)" : "🟢 OK (Dry)", 
+                 leak_status);
 
         if (temp > -100.0)
         {
