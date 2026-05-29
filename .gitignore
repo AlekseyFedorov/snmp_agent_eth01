@@ -6,3 +6,4 @@ sdkconfig.old
 .cache
 .idea
 dependencies.lock
+handler_log.txt

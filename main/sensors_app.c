@@ -26,10 +26,12 @@ void sensors_init(void) {
     gpio_reset_pin(DOOR_OPEN_1_GPIO);
     gpio_set_direction(DOOR_OPEN_1_GPIO, GPIO_MODE_INPUT);
     gpio_set_pull_mode(DOOR_OPEN_1_GPIO, GPIO_PULLUP_ONLY);
+    ESP_LOGI(TAG, "Door sensor 1 initialized on GPIO %d", DOOR_OPEN_1_GPIO);
 
     gpio_reset_pin(DOOR_OPEN_2_GPIO);
     gpio_set_direction(DOOR_OPEN_2_GPIO, GPIO_MODE_INPUT);
     gpio_set_pull_mode(DOOR_OPEN_2_GPIO, GPIO_PULLUP_ONLY);
+    ESP_LOGI(TAG, "Door sensor 2 initialized on GPIO %d", DOOR_OPEN_2_GPIO);
 
     onewire_bus_handle_t bus = NULL;
     onewire_bus_config_t bus_config = { .bus_gpio_num = ONEWIRE_BUS_GPIO };

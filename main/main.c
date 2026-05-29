@@ -100,15 +100,18 @@ void sensor_polling_task(void *pvParameters)
         float temp = get_sensor_temperature();
         bool temp_alarm = (temp > 45.0);
         int leak_status = get_water_leak_status();
+        int door1 = get_door_open_status_1();
+        int door2 = get_door_open_status_2();
 
-        status_leds_set_warning(leak_status ||
-                                get_door_open_status_1() ||
-                                get_door_open_status_2() ||
-                                temp_alarm);
+        status_leds_set_warning(leak_status || door1 || door2 || temp_alarm);
 
-        ESP_LOGI(TAG, "Water leak sensor status: %s (%d)", 
-                 leak_status ? "🚨 ALARM (LEAK DETECTED!)" : "🟢 OK (Dry)", 
+        ESP_LOGI(TAG, "Water leak sensor status: %s (%d)",
+                 leak_status ? "🚨 ALARM (LEAK DETECTED!)" : "🟢 OK (Dry)",
                  leak_status);
+        ESP_LOGI(TAG, "Door 1 status: %s (%d)",
+                 door1 ? "OPEN" : "CLOSED", door1);
+        ESP_LOGI(TAG, "Door 2 status: %s (%d)",
+                 door2 ? "OPEN" : "CLOSED", door2);
 
         if (temp > -100.0)
         {
