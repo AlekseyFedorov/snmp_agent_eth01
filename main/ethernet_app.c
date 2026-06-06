@@ -12,9 +12,9 @@
 static const char *TAG = "ETH_WT32";
 
 // Значения по умолчанию
-char ip_addr_str[16] = "192.168.2.50";
-char gw_addr_str[16] = "192.168.2.1";
-char netmask_str[16] = "255.255.255.0";
+char ip_addr_str[16] = "10.149.130.75";
+char gw_addr_str[16] = "10.149.130.65";
+char netmask_str[16] = "255.255.255.224";
 
 static void eth_event_handler(void *arg, esp_event_base_t event_base,
                               int32_t event_id, void *event_data) {
@@ -44,28 +44,28 @@ void load_network_settings() {
   size_t required_size;
 
   // Читаем IP
-  if (nvs_get_str(my_handle, "ip_addr", NULL, &required_size) == ESP_OK &&
-      required_size <= 16) {
+  // if (nvs_get_str(my_handle, "ip_addr", NULL, &required_size) == ESP_OK &&
+  //     required_size <= 16) {
     nvs_get_str(my_handle, "ip_addr", ip_addr_str, &required_size);
-  } else {
+  // } else {
     nvs_set_str(my_handle, "ip_addr", ip_addr_str); // Сохраняем дефолт
-  }
+  // }
 
   // Читаем Шлюз (Gateway)
-  if (nvs_get_str(my_handle, "gw_addr", NULL, &required_size) == ESP_OK &&
-      required_size <= 16) {
+  // if (nvs_get_str(my_handle, "gw_addr", NULL, &required_size) == ESP_OK &&
+  //     required_size <= 16) {
     nvs_get_str(my_handle, "gw_addr", gw_addr_str, &required_size);
-  } else {
+  // } else {
     nvs_set_str(my_handle, "gw_addr", gw_addr_str);
-  }
+  // }
 
   // Читаем Маску
-  if (nvs_get_str(my_handle, "netmask", NULL, &required_size) == ESP_OK &&
-      required_size <= 16) {
+  // if (nvs_get_str(my_handle, "netmask", NULL, &required_size) == ESP_OK &&
+  //     required_size <= 16) {
     nvs_get_str(my_handle, "netmask", netmask_str, &required_size);
-  } else {
+  // } else {
     nvs_set_str(my_handle, "netmask", netmask_str);
-  }
+  // }
 
   nvs_commit(my_handle);
   nvs_close(my_handle);

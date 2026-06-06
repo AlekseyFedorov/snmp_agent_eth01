@@ -15,7 +15,7 @@ static const char *TAG = "SENSORS";
 static ds18b20_device_handle_t ds18b20_dev = NULL;
 
 void sensors_init(void) {
-    // Инициализация датчика протечки H2O-Контакт
+    // Инициализация датчика протечки Gidrolock WSP
     gpio_reset_pin(WATER_LEAK_GPIO);
     gpio_set_direction(WATER_LEAK_GPIO, GPIO_MODE_INPUT);
     gpio_set_pull_mode(WATER_LEAK_GPIO, GPIO_PULLUP_ONLY);

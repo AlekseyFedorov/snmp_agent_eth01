@@ -322,11 +322,11 @@
   </g>
 
   <!-- ============================================================ -->
-  <!-- H2O WATER LEAK SENSOR + TRANSISTOR -->
+  <!-- GIDROLOCK WSP WATER LEAK SENSOR + TRANSISTOR -->
   <!-- ============================================================ -->
   <g id="h2o-sensor" transform="translate(40, 430)">
     <rect class="sensor-body" x="0" y="0" width="130" height="80" rx="10"/>
-    <text class="lbl-bold" x="8" y="25">H2O-Контакт</text>
+    <text class="lbl-bold" x="8" y="25">Gidrolock WSP</text>
     <text class="lbl-small" x="8" y="45">Датчик протечки</text>
     <text class="lbl-tiny" x="8" y="62">Питание 5−24V</text>
     <text class="lbl-tiny" x="8" y="77">Двухпроводный</text>
@@ -338,7 +338,7 @@
     <text fill="#fff" font-size="10" x="85" y="92">−</text>
   </g>
 
-  <!-- Transistor NPN (2N2222 / BC547) -->
+  <!-- Transistor NPN (2N3904) -->
   <g id="transistor" transform="translate(140, 565)">
     <!-- Transistor body (TO-92) -->
     <path d="M0,0 Q15,-10 30,0 L30,40 Q15,50 0,40 Z" fill="#1a1a1a" stroke="#000" stroke-width="2"/>
@@ -352,7 +352,7 @@
     <text class="lbl-tiny" x="12" y="72">B</text>
     <text class="lbl-tiny" x="26" y="72">E</text>
     <text class="lbl-tiny" x="32" y="42">NPN</text>
-    <text class="lbl-tiny" x="32" y="55">2N2222</text>
+    <text class="lbl-tiny" x="32" y="55">2N3904</text>
   </g>
 
   <!-- Base resistor 10kΩ -->
@@ -505,12 +505,12 @@
   <path class="w-red" d="M66,320 L66,292 L88,292"/>
   <path class="w-yellow" d="M66,380 L66,400 L88,400 L100,310"/>
 
-  <!-- ===== H2O WATER LEAK SENSOR CONNECTIONS ===== -->
-  <!-- 5V from LEFT + rail to H2O + terminal -->
+  <!-- ===== GIDROLOCK WSP WATER LEAK SENSOR CONNECTIONS ===== -->
+  <!-- 5V from LEFT + rail to sensor + terminal -->
   <path class="w-red" d="M87,470 L87,490 L80,492 L72,525"/>
-  <text class="lbl-tiny" fill="#e74c3c" x="92" y="485">+5V → H2O+</text>
+  <text class="lbl-tiny" fill="#e74c3c" x="92" y="485">+5V → WSP+</text>
 
-  <!-- H2O - terminal to base resistor R-base -->
+  <!-- WSP - terminal to base resistor R-base -->
   <path class="w-blue" d="M120,510 L120,530 L195,530 L195,545"/>
 
   <!-- R-base to transistor Base -->
@@ -580,7 +580,7 @@
 
     <!-- Blue wire -->
     <line x1="15" y1="148" x2="60" y2="148" class="w-blue"/>
-    <text class="lbl" x="70" y="154">Сигнал протечки (H2O → база транзистора)</text>
+    <text class="lbl" x="70" y="154">Сигнал протечки (WSP → база транзистора)</text>
 
     <!-- Green wire -->
     <line x1="15" y1="178" x2="60" y2="178" class="w-green"/>
@@ -601,7 +601,7 @@
   <g id="notes" transform="translate(920, 575)">
     <text class="section-title" x="0" y="0">Важные замечания</text>
     <text class="lbl-small" x="0" y="25">• Все земли (GND) платы, датчиков и БП — общие.</text>
-    <text class="lbl-small" x="0" y="45">• H2O датчик: без транзистора — сожжёт GPIO (5−24V).</text>
+    <text class="lbl-small" x="0" y="45">• Gidrolock WSP: без транзистора — сожжёт GPIO (5−24V).</text>
     <text class="lbl-small" x="0" y="65">• Подтяжка DS18B20: 4.7кОм между VDD и DQ обязательна.</text>
     <text class="lbl-small" x="0" y="85">• Герконы: не требуют внешнего питания.</text>
     <text class="lbl-small" x="0" y="105">• Резисторы LED: 220−470 Ом (без них — сгорят).</text>
@@ -629,7 +629,7 @@
 
     <rect fill="#fff" stroke="#ddd" stroke-width="0.5" x="0" y="60" width="330" height="22"/>
     <text font-size="11" fill="#17212b" x="8" y="75">33</text>
-    <text font-size="11" fill="#2980b9" x="80" y="75">H2O Протечка</text>
+    <text font-size="11" fill="#2980b9" x="80" y="75">Gidrolock WSP</text>
     <text font-size="11" fill="#445566" x="230" y="75">Через NPN-транзистор</text>
 
     <rect fill="#f8f9fa" stroke="#ddd" stroke-width="0.5" x="0" y="82" width="330" height="22"/>
