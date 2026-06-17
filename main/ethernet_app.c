@@ -2,14 +2,11 @@
 #include "esp_eth_driver.h"
 #include "esp_event.h"
 #include "esp_netif.h"
-// #include "esp_log.h"
 #include "driver/gpio.h"
 #include "ethernet_app.h"
 #include "led_app.h"
 
 #include "nvs.h"
-
-static const char *TAG = "ETH_WT32";
 
 // Значения по умолчанию
 char ip_addr_str[16] = "10.149.130.75";
@@ -34,40 +31,25 @@ static void eth_event_handler(void *arg, esp_event_base_t event_base,
   }
 }
 
-void load_network_settings() {
+static void load_setting(nvs_handle_t handle, const char *key, char *buf, size_t buf_size, bool *dirty)
+{
+  size_t sz = buf_size;
+  if (nvs_get_str(handle, key, buf, &sz) != ESP_OK) {
+    nvs_set_str(handle, key, buf);
+    *dirty = true;
+  }
+}
+
+void load_network_settings(void) {
   nvs_handle_t my_handle;
-  // Открываем NVS
-  esp_err_t err = nvs_open("storage", NVS_READWRITE, &my_handle);
-  if (err != ESP_OK)
-    return;
+  if (nvs_open("storage", NVS_READWRITE, &my_handle) != ESP_OK) return;
 
-  size_t required_size;
+  bool dirty = false;
+  load_setting(my_handle, "ip_addr", ip_addr_str, sizeof(ip_addr_str), &dirty);
+  load_setting(my_handle, "gw_addr", gw_addr_str, sizeof(gw_addr_str), &dirty);
+  load_setting(my_handle, "netmask", netmask_str,  sizeof(netmask_str),  &dirty);
 
-  // Читаем IP
-  // if (nvs_get_str(my_handle, "ip_addr", NULL, &required_size) == ESP_OK &&
-  //     required_size <= 16) {
-    nvs_get_str(my_handle, "ip_addr", ip_addr_str, &required_size);
-  // } else {
-    nvs_set_str(my_handle, "ip_addr", ip_addr_str); // Сохраняем дефолт
-  // }
-
-  // Читаем Шлюз (Gateway)
-  // if (nvs_get_str(my_handle, "gw_addr", NULL, &required_size) == ESP_OK &&
-  //     required_size <= 16) {
-    nvs_get_str(my_handle, "gw_addr", gw_addr_str, &required_size);
-  // } else {
-    nvs_set_str(my_handle, "gw_addr", gw_addr_str);
-  // }
-
-  // Читаем Маску
-  // if (nvs_get_str(my_handle, "netmask", NULL, &required_size) == ESP_OK &&
-  //     required_size <= 16) {
-    nvs_get_str(my_handle, "netmask", netmask_str, &required_size);
-  // } else {
-    nvs_set_str(my_handle, "netmask", netmask_str);
-  // }
-
-  nvs_commit(my_handle);
+  if (dirty) nvs_commit(my_handle);
   nvs_close(my_handle);
 }
 
