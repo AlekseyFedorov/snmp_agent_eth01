@@ -3,12 +3,10 @@
 
 #include "esp_err.h"
 
-// Изменяем на void, чтобы соответствовать .c файлу
 void sensors_init(void);
-float get_sensor_temperature(void);
+void sensors_trigger_temperature_conversion(void);
+float sensors_read_temperature(void);
 int get_water_leak_status(void);
-
-// Добавляем объявления для новых функций
 int get_door_open_status_1(void);
 int get_door_open_status_2(void);
 

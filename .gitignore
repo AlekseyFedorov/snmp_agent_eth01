@@ -7,4 +7,11 @@ sdkconfig.old
 .idea
 dependencies.lock
 handler_log.txt
+sdkconfig
+chat_log.txt
+logs/
+IDEAL_SYSTEM_PROMPT.txt
+antigravity_ide_handler.py
+register_antigravity_ide.py
+snmp_agent_eth01/
 .deepseek

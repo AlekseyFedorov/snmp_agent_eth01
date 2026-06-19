@@ -35,7 +35,7 @@
 
 static const char *TAG = "SNMP_MAIN";
 
-static int32_t cached_temp_x10 = 0;
+static volatile int32_t cached_temp_x10 = 0;
 
 /* MIB2 system data */
 static u8_t syscontact_storage[64] = "gpbu17672";
@@ -97,23 +97,28 @@ void sensor_polling_task(void *pvParameters)
 {
     while (1)
     {
-        float temp = get_sensor_temperature();
-        bool temp_alarm = (temp > 45.0);
+        sensors_trigger_temperature_conversion();
+
         int leak_status = get_water_leak_status();
         int door1 = get_door_open_status_1();
         int door2 = get_door_open_status_2();
 
+        vTaskDelay(pdMS_TO_TICKS(800));
+
+        float temp = sensors_read_temperature();
+        bool temp_alarm = (temp > 45.0f);
+
         status_leds_set_warning(leak_status || door1 || door2 || temp_alarm);
 
         ESP_LOGI(TAG, "Water leak sensor status: %s (%d)",
-                 leak_status ? "🚨 ALARM (LEAK DETECTED!)" : "🟢 OK (Dry)",
+                 leak_status ? "ALARM (LEAK DETECTED!)" : "OK (Dry)",
                  leak_status);
         ESP_LOGI(TAG, "Door 1 status: %s (%d)",
                  door1 ? "OPEN" : "CLOSED", door1);
         ESP_LOGI(TAG, "Door 2 status: %s (%d)",
                  door2 ? "OPEN" : "CLOSED", door2);
 
-        if (temp > -100.0)
+        if (temp > -100.0f)
         {
             cached_temp_x10 = (int32_t)(temp * 10);
             ESP_LOGI(TAG, "Temp updated: %.1fC", temp);
@@ -290,12 +295,13 @@ static snmp_err_t set_system_config(const struct snmp_scalar_array_node_def *nod
 
     ESP_LOGW(TAG, "Network config changed via SNMP, rebooting in 1s...");
 
-    // Асинхронный запуск перезагрузки
     esp_timer_create_args_t reboot_args = { .callback = &reboot_timer_callback, .name = "reboot" };
     esp_timer_handle_t timer;
-    if (esp_timer_create(&reboot_args, &timer) != ESP_OK ||
-        esp_timer_start_once(timer, 1000000) != ESP_OK)
-    {
+    if (esp_timer_create(&reboot_args, &timer) != ESP_OK) {
+        return SNMP_ERR_GENERROR;
+    }
+    if (esp_timer_start_once(timer, 1000000) != ESP_OK) {
+        esp_timer_delete(timer);
         return SNMP_ERR_GENERROR;
     }
 

@@ -61,13 +61,16 @@ void sensors_init(void) {
     onewire_del_device_iter(iter);
 }
 
-float get_sensor_temperature(void) {
-    float temp = -127.0;
+void sensors_trigger_temperature_conversion(void) {
     if (ds18b20_dev) {
-        if (ds18b20_trigger_temperature_conversion(ds18b20_dev) == ESP_OK) {
-            vTaskDelay(pdMS_TO_TICKS(800)); // Ждем завершения преобразования
-            ds18b20_get_temperature(ds18b20_dev, &temp);
-        }
+        ds18b20_trigger_temperature_conversion(ds18b20_dev);
+    }
+}
+
+float sensors_read_temperature(void) {
+    float temp = -127.0f;
+    if (ds18b20_dev) {
+        ds18b20_get_temperature(ds18b20_dev, &temp);
     }
     return temp;
 }
