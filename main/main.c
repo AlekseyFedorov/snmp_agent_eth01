@@ -12,6 +12,7 @@
 #include "esp_heap_caps.h"
 #include "driver/gpio.h"
 #include "nvs.h"
+#include "esp_task_wdt.h"
 
 #include "lwip/apps/snmp.h"
 #include "lwip/apps/snmp_mib2.h"
@@ -95,6 +96,8 @@ static bool is_contiguous_netmask(const ip4_addr_t *mask)
 /* ============================ */
 void sensor_polling_task(void *pvParameters)
 {
+    esp_task_wdt_add(NULL);
+
     while (1)
     {
         sensors_trigger_temperature_conversion();
@@ -123,6 +126,7 @@ void sensor_polling_task(void *pvParameters)
             cached_temp_x10 = (int32_t)(temp * 10);
             ESP_LOGI(TAG, "Temp updated: %.1fC", temp);
         }
+        esp_task_wdt_reset();
         vTaskDelay(pdMS_TO_TICKS(2000));
     }
 }
@@ -135,6 +139,8 @@ void factory_reset_task(void *pvParameter)
     gpio_reset_pin(RESET_BUTTON_PIN);
     gpio_set_direction(RESET_BUTTON_PIN, GPIO_MODE_INPUT);
     gpio_set_pull_mode(RESET_BUTTON_PIN, GPIO_PULLUP_ONLY);
+
+    esp_task_wdt_add(NULL);
 
     int press_counter = 0;
 
@@ -165,6 +171,7 @@ void factory_reset_task(void *pvParameter)
             press_counter = 0;
         }
 
+        esp_task_wdt_reset();
         vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
@@ -356,6 +363,7 @@ void app_main(void)
 {
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
+    ESP_ERROR_CHECK(esp_task_wdt_init(5, true));
     ESP_ERROR_CHECK(status_leds_init());
 
     xTaskCreate(factory_reset_task, "reset_task", 2048, NULL, 5, NULL);

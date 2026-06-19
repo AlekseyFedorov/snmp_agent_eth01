@@ -4,6 +4,7 @@
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_task_wdt.h"
 
 #include "led_app.h"
 
@@ -76,6 +77,8 @@ static void status_leds_task(void *pvParameters)
 {
     bool blink_on = false;
 
+    esp_task_wdt_add(NULL);
+
     while (1)
     {
         blink_on = !blink_on;
@@ -86,6 +89,7 @@ static void status_leds_task(void *pvParameters)
         led_write(STATUS_LED_WARNING_GPIO, STATUS_LED_WARNING_ACTIVE_LEVEL,
                   s_warning_active && blink_on);
 
+        esp_task_wdt_reset();
         vTaskDelay(pdMS_TO_TICKS(STATUS_LED_TASK_PERIOD_MS));
     }
 }
