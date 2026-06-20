@@ -62,9 +62,6 @@ esp_err_t ethernet_init_static(void) {
   // Сначала загружаем настройки из памяти
   load_network_settings();
 
-  // Настраиваем LwIP
-  // esp_netif_ip_info_t ip_info;
-
   // Регистрируем обработчик для установки статического IP при подключении кабеля
   esp_event_handler_instance_t instance_connected;
   ESP_ERROR_CHECK(esp_event_handler_instance_register(ETH_EVENT,
@@ -72,13 +69,6 @@ esp_err_t ethernet_init_static(void) {
                                                       &eth_event_handler,
                                                       eth_netif,
                                                       &instance_connected));
-  //    esp_netif_set_ip_info(eth_netif, &ip_info);
-
-  // внешний осциллятор через GPIO 16
-  gpio_reset_pin(GPIO_NUM_16);
-  gpio_set_direction(GPIO_NUM_16, GPIO_MODE_OUTPUT);
-  gpio_set_level(GPIO_NUM_16, 1);
-  vTaskDelay(pdMS_TO_TICKS(100));
 
   eth_mac_config_t mac_config = ETH_MAC_DEFAULT_CONFIG();
   eth_esp32_emac_config_t esp32_emac_config = ETH_ESP32_EMAC_DEFAULT_CONFIG();
@@ -86,13 +76,18 @@ esp_err_t ethernet_init_static(void) {
   esp32_emac_config.smi_gpio.mdc_num = 23;
   esp32_emac_config.smi_gpio.mdio_num = 18;
 
+  // RMII clock output on GPIO 16 for external LAN8720 oscillator
+  esp32_emac_config.clock_config.rmii.clock_mode = EMAC_CLK_OUT;
+  esp32_emac_config.clock_config.rmii.clock_gpio = 16;
+
   esp_eth_mac_t *mac = esp_eth_mac_new_esp32(&esp32_emac_config, &mac_config);
 
   eth_phy_config_t phy_config = ETH_PHY_DEFAULT_CONFIG();
   phy_config.phy_addr = 1;
   phy_config.reset_gpio_num = -1;
 
-  esp_eth_phy_t *phy = esp_eth_phy_new_lan87xx(&phy_config);
+  // v6.0.1: use generic PHY driver (works with LAN8720 and all 802.3 PHYs)
+  esp_eth_phy_t *phy = esp_eth_phy_new_generic(&phy_config);
 
   esp_eth_config_t eth_config = ETH_DEFAULT_CONFIG(mac, phy);
   esp_eth_handle_t eth_handle = NULL;

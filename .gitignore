@@ -1,4 +1,5 @@
 build
+build_log.txt
 managed_components
 sdkconfig.old
 .vscode

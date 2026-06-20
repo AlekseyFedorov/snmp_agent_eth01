@@ -363,7 +363,11 @@ void app_main(void)
 {
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
-    ESP_ERROR_CHECK(esp_task_wdt_init(5, true));
+    const esp_task_wdt_config_t wdt_config = {
+        .timeout_ms = 5000,
+        .trigger_panic = true,
+    };
+    ESP_ERROR_CHECK(esp_task_wdt_init(&wdt_config));
     ESP_ERROR_CHECK(status_leds_init());
 
     xTaskCreate(factory_reset_task, "reset_task", 2048, NULL, 5, NULL);
